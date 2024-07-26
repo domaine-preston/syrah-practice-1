@@ -1,0 +1,4 @@
+:host {
+  @apply !box-content inline-flex h-[1em] w-[1em];
+  font-size: var(--icon-size, inherit);
+}

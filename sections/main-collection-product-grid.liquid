@@ -1,0 +1,133 @@
+<script defer type='module' src='{{ '-component-facets.js' | asset_url }}'></script>
+
+{% liquid
+  assign filter_params = ''
+  assign active_filters_size = 0
+
+  for filter in collection.filters
+    if filter.active_values.size > 0
+      assign active_filters_size = active_filters_size | plus: filter.active_values.size
+
+      if filter_params != ''
+        assign filter_params = filter_params | append: '&'
+      endif
+
+      for value in filter.active_values
+        assign filter_params = filter_params | append: filter.param_name | append: '=' | append: value.value
+
+        unless forloop.last
+          assign filter_params = filter_params | append: '&'
+        endunless
+      endfor
+    endif
+  endfor
+%}
+
+<div id='collection' data-section-id='{{- section.id -}}'>
+  <div section-id='{{- section.id -}}'>
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      <div class='container pb-6'>
+        <aside
+          class='pb-6'
+          id='main-collection-filters'
+          data-id='{{ section.id }}'
+          {% comment %}
+            Remove 'sub-section-id' if you don't need to update the filters
+            with the product grid. Filters are updated onChange already.
+
+            Keep in mind any DOM tree changes here, like `active_filters_size`,
+            wouldn't be updated if you remove the `sub-section-id`.
+          {% endcomment %}
+          sub-section-id='main-collection-filters'
+        >
+          {% capture drawer_filters %}
+            {% render 'facets', results: collection %}
+          {% endcapture %}
+
+          {% capture filters_button %}Filters ({{ active_filters_size }}){% endcapture %}
+
+          {% render 'modal-dialog-toggle', modal_id: 'filter-drawer-dialog', label: filters_button %}
+
+          {% liquid
+            assign title = 'Filters'
+            render 'modal-dialog', id: 'filter-drawer-dialog', anchor: 'left', content: drawer_filters, type: 'drawer', close_on_backdrop_click: true, title: title
+          %}
+        </aside>
+
+        <div sub-section-id='product-grid-container' id='product-grid-container'>
+          {%- if collection.products.size == 0 -%}
+            <div id='product-grid' data-id='{{ section.id }}'>
+              <div class='flex items-center'>
+                <h2>
+                  {{ 'sections.collection_template.empty' | t -}}
+                  <br>
+                  {{
+                    'sections.collection_template.use_fewer_filters_html'
+                    | t: link: collection.url, class: 'underlined-link link'
+                  }}
+                </h2>
+              </div>
+            </div>
+          {%- else -%}
+            <div>
+              <ul
+                id='product-grid'
+                data-id='{{ section.id }}'
+                class='grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4 lg:gap-x-8'
+              >
+                {%- for product in collection.products -%}
+                  {% liquid
+                    assign lazy_load = false
+
+                    if forloop.index > 2
+                      assign lazy_load = true
+                    endif
+                  %}
+
+                  <li class='w-full flex'>
+                    {% render 'product-card',
+                      product: product,
+                      media_aspect_ratio: 'portrait',
+                      lazy_load: lazy_load,
+                      shoppable: section.settings.shoppable_card
+                    %}
+                  </li>
+                {%- endfor -%}
+              </ul>
+
+              {%- if paginate.pages > 1 -%}
+                <div class='flex justify-center py-6 [&_span.current]:font-bold [&_span]:px-2'>
+                  {{- paginate | default_pagination -}}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-product-grid.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16,
+      "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "shoppable_card",
+      "label": "t:sections.main-collection-product-grid.settings.shoppable_card.label",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

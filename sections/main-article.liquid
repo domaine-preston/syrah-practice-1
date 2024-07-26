@@ -1,0 +1,109 @@
+<article class='grid grid-cols-1 gap-md'>
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when '@app' -%}
+        <div class='px-pagemargin 2xl:container'>
+          {% render block %}
+        </div>
+      {%- when 'featured_image' -%}
+        {%- if article.image -%}
+          <div
+            class='px-pagemargin 2xl:container drop-shadow'
+            {{ block.shopify_attributes }}
+          >
+            <div class='relative aspect-video max-h-dvh'>
+              {%- render 'image',
+                image: article.image,
+                class: 'h-full w-full inset-0 absolute',
+                sizes: '100vw',
+                width: 3000,
+                widths: '750, 800, 1100, 1500, 2200, 3000',
+                preload: true
+              -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+      {%- when 'title' -%}
+        <header
+          class='px-pagemargin 2xl:container text-center'
+          {{ block.shopify_attributes }}
+        >
+          <h1
+            class='h2'
+          >
+            {{ article.title | escape }}
+          </h1>
+          {%- if block.settings.blog_show_date -%}
+            <span class='caption'>
+              {{- article.published_at | time_tag: format: 'date' -}}
+            </span>
+          {%- endif -%}
+          {%- if block.settings.blog_show_author -%}
+            <span class='caption'>
+              <span>{{ article.author }}</span>
+            </span>
+          {%- endif -%}
+        </header>
+
+      {%- when 'content' -%}
+        <div
+          class='px-pagemargin 2xl:container text-center rte'
+          {{ block.shopify_attributes }}
+        >
+          {{ article.content }}
+        </div>
+    {%- endcase -%}
+  {%- endfor -%}
+
+  <div class='p-pagemargin 2xl:container text-center'>
+    <a href='{{ blog.url }}' class='btn' variant='tertiary'>
+      <span class='rotate-180'>{% render 'icon' with 'icon-arrow' %}</span>
+      {{ 'blogs.article.back_to_blog' | t: title: blog.title }}
+    </a>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "t:sections.main-article.name",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "title",
+      "name": "t:sections.main-article.blocks.title.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "blog_show_date",
+          "default": true,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_date.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_show_author",
+          "default": false,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_author.label"
+        }
+      ]
+    },
+    {
+      "type": "featured_image",
+      "name": "t:sections.main-article.blocks.featured_image.name"
+    },
+    {
+      "type": "content",
+      "name": "t:sections.main-article.blocks.content.name",
+      "limit": 1
+    }
+  ],
+  "enabled_on": {
+    "templates": ["article"]
+  }
+}
+{% endschema %}

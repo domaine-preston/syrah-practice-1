@@ -1,0 +1,59 @@
+{%- assign cart_quantity = cart | item_count_for_variant: variant.id -%}
+{%- assign current_quantity = quantity | default: cart_quantity | default: 1 -%}
+<quantity-input
+  class='grid grid-cols-[45px_60px_45px] border-solid border border-t-foreground max-w-fit'
+  variant-id='{{ variant.id }}'
+  cart-quantity='{{ cart_quantity }}'
+  min='{{ variant.quantity_rule.min }}'
+  value='{{ current_quantity }}'
+  {% if variant.quantity_rule.max != null %}
+    max='{{ variant.quantity_rule.max | minus: cart_quantity }}'
+  {% endif %}
+
+  {% if cart_item != blank %}
+    key='{{ cart_item.key }}'
+  {% endif %}
+>
+  <button
+    class='inline-flex items-center justify-center aspect-square text-utility disabled:opacity-50 disabled:pointer-events-none'
+    name='minus'
+    type='button'
+    id='{{ id }}__decrement'
+  >
+    <span class='sr-only'>
+      {{- 'products.product.quantity.decrease' | t: product: product.title | escape -}}
+    </span>
+    {%- render 'icon' with 'icon-minus' -%}
+  </button>
+  <input
+    class='text-center remove-arrow text-base'
+    type='number'
+    name='{{ name | default: 'quantity' }}'
+    value='{{ current_quantity }}'
+    inputmode='numeric'
+    {% # theme-check-disable %}
+    min='0'
+    {% if variant.quantity_rule.max != null %}
+      max='{{ variant.quantity_rule.max | minus: cart_quantity }}'
+    {% endif %}
+    step='{{ variant.quantity_rule.increment }}'
+    {% # theme-check-enable %}
+    aria-label='{{ 'products.product.quantity.input_label' | t: product: product.title | escape }}'
+    id='{{ id }}'
+
+    {% if form_id != blank %}
+      form='{{ form_id }}'
+    {% endif %}
+  >
+  <button
+    class='inline-flex items-center justify-center aspect-square text-utility disabled:opacity-50 disabled:pointer-events-none'
+    name='plus'
+    type='button'
+    id='{{ id }}__increment'
+  >
+    <span class='sr-only'>
+      {{- 'products.product.quantity.increase' | t: product: product.title | escape -}}
+    </span>
+    {%- render 'icon' with 'icon-plus' -%}
+  </button>
+</quantity-input>

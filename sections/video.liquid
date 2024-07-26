@@ -1,0 +1,155 @@
+{%- liquid
+  assign media = section.settings.video | default: section.settings.video_url
+  assign video_alt = section.settings.video.alt | default: section.settings.video_alt_description
+  assign cover_image = section.settings.cover_image | default: null
+  assign loop = section.settings.enable_video_looping
+  assign video_title = section.settings.heading
+  assign poster_loading = 'lazy'
+
+  if section.index < 3
+    assign poster_loading = 'eager'
+  endif
+-%}
+
+<div class='isolate grid grid-cols-1 gap-y-sm {% unless section.settings.full_width %} 2xl:container px-pagemargin{% endunless %}'>
+  {%- if section.settings.heading != blank or section.settings.description != blank -%}
+    <div class='grid grid-cols-1 gap-y-xs {% if section.settings.full_width %} 2xl:container px-pagemargin{% endif %}'>
+      {%- unless section.settings.heading == blank -%}
+        <h2 class='{{ section.settings.heading_size }}'>{{ section.settings.heading }}</h2>
+      {%- endunless -%}
+      {%- unless section.settings.description == blank -%}
+        <p class='rte'>{{ section.settings.description }}</p>
+      {%- endunless -%}
+    </div>
+  {%- endif -%}
+
+  {%- render 'deferred-media',
+    video: media,
+    video_alt: video_alt,
+    cover_image: cover_image,
+    loop: loop,
+    video_title: video_title,
+    poster_loading: poster_loading
+  -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.video.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "t:sections.video.settings.heading.default",
+      "label": "t:sections.video.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Heading 2"
+        },
+        {
+          "value": "h1",
+          "label": "Heading 1"
+        },
+        {
+          "value": "h3",
+          "label": "Heading 3"
+        },
+        {
+          "value": "h4",
+          "label": "Heading 4"
+        },
+        {
+          "value": "h5",
+          "label": "Heading 5"
+        },
+        {
+          "value": "h6",
+          "label": "Heading 6"
+        },
+        {
+          "value": "p",
+          "label": "Paragraph"
+        },
+        {
+          "value": "caption",
+          "label": "Caption"
+        }
+      ],
+      "default": "h3",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "t:sections.video.settings.main_description.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": "t:sections.video.settings.enable_video_looping.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.video.settings.header__1.content"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "t:sections.video.settings.video.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.video.settings.header__2.content"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.video.settings.paragraph.content"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "accept": ["youtube", "vimeo"],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+      "label": "t:sections.video.settings.video_url.label",
+      "info": "t:sections.video.settings.video_url.info"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "t:sections.video.settings.cover_image.label"
+    },
+    {
+      "type": "text",
+      "id": "video_alt_description",
+      "label": "t:sections.video.settings.description.label",
+      "info": "t:sections.video.settings.description.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.video.settings.header__3.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.video.settings.full_width.label",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.video.presets.name"
+    }
+  ]
+}
+{% endschema %}

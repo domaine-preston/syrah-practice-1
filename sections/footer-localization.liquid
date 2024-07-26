@@ -1,0 +1,198 @@
+{%- liquid
+  assign show_currency = false
+  assign show_language = false
+
+  if section.settings.enable_country_selector and localization.available_countries.size > 1
+    assign show_currency = true
+  endif
+
+  if section.settings.enable_language_selector and localization.available_languages.size > 1
+    assign show_language = true
+  endif
+-%}
+
+{%- if show_currency or show_language -%}
+  <div class='px-pagemargin 2xl:container flex justify-between gap-sm w-full py-xs {{ section.settings.background_color }} {{ section.settings.text_color }}'>
+    {%- if show_currency -%}
+      {% render 'i18n-select', type: 'currency' %}
+    {%- endif -%}
+    {%- if show_language -%}
+      {% render 'i18n-select', type: 'language' %}
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.footer_localization.name",
+  "limit": 1,
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "presets": [
+    {
+      "name": "t:sections.footer_localization.name"
+    }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.footer.settings.background_color.label",
+      "options": [
+        {
+          "group": "Primitives",
+          "value": "bg-p-darkest",
+          "label": "Darkest"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-dark",
+          "label": "Dark"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-neutral",
+          "label": "Neutral"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-light",
+          "label": "Light"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-lightest",
+          "label": "Lightest"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-foreground",
+          "label": "Foreground"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-foreground-secondary",
+          "label": "Foreground Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-background",
+          "label": "Background"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-background-secondary",
+          "label": "Background Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-primary",
+          "label": "Brand Primary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-secondary",
+          "label": "Brand Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-primary-contrast",
+          "label": "Brand Primary Contrast"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-secondary-contrast",
+          "label": "Brand Secondary Contrast"
+        }
+      ],
+      "default": "bg-t-background"
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "t:sections.footer.settings.text_color.label",
+      "options": [
+        {
+          "group": "Primitives",
+          "value": "text-p-darkest",
+          "label": "Darkest"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-dark",
+          "label": "Dark"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-neutral",
+          "label": "Neutral"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-light",
+          "label": "Light"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-lightest",
+          "label": "Lightest"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-foreground",
+          "label": "Foreground"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-foreground-secondary",
+          "label": "Foreground Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-background",
+          "label": "Background"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-background-secondary",
+          "label": "Background Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-primary",
+          "label": "Brand Primary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-secondary",
+          "label": "Brand Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-primary-contrast",
+          "label": "Brand Primary Contrast"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-secondary-contrast",
+          "label": "Brand Secondary Contrast"
+        }
+      ],
+      "default": "text-p-darkest"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "default": true,
+      "label": "t:sections.footer_localization.settings.enable_country_selector.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "default": true,
+      "label": "t:sections.footer_localization.settings.enable_language_selector.label"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,249 @@
+{%- assign app_blocks = section.blocks | where: 'type', '@app' -%}
+<div class='px-pagemargin py-lg grid grid-cols-1 gap-md {{ section.settings.background_color }} {{ section.settings.text_color }}'>
+  <div class='grid grid-cols-12 gap-md 2xl:container'>
+    <div class='col-span-8 lg:col-span-4 grid grid-cols-1 gap-2xs'>
+      {%- for app_block in app_blocks -%}
+        {% render app_block %}
+      {%- endfor -%}
+    </div>
+    {%- if section.blocks.size > 0 -%}
+      <div class='col-span-12 lg:col-span-8 xl:col-span-7 xl:col-start-6 justify-start lg:justify-items-end grid grid-cols-2 lg:grid-cols-4 gap-sm'>
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'link_list' -%}
+              <div class='flex flex-col gap-xs'>
+                <h3 class='h6'>{{ block.settings.heading }}</h3>
+                <ul class='grid grid-cols-1 gap-2xs'>
+                  {%- for link in block.settings.menu.links -%}
+                    <li>
+                      <a class='p text-[inherit]' href='{{ link.url }}'>{{ link.title }}</a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- else -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.show_social -%}
+    {%- assign platforms = 'twitter, facebook, instagram' | split: ', ' -%}
+    {%- capture social_links -%}
+      {%- for platform in platforms -%}
+        {%- assign setting = 'social_' | append: platform | append: '_link' -%}
+        {%- assign locale = 'general.social.links.' | append: platform -%}
+        {%- if settings[setting] != blank -%}
+          <li class='w-5'>
+            <a href='{{ settings[setting] }}' class='' aria-describedby='a11y-external-message'>
+              <svg-icon src="icon-{{ platform }}" class='text-[inherit] hover:text-p-dark'></svg-icon>
+              <span class='sr-only'>{{ locale | t }}</span>
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    {%- if social_links != blank -%}
+      <ul class='flex items-center justify-start 2xl:container gap-sm flex-wrap' role='list'>
+        {{- social_links -}}
+      </ul>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.footer.name",
+  "limit": 1,
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "presets": [
+    {
+      "name": "t:sections.footer.name"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "link_list",
+      "name": "t:sections.footer.blocks.link_list.name",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Quick links",
+          "label": "t:sections.footer.blocks.link_list.settings.heading.label",
+          "info": "t:sections.footer.blocks.link_list.settings.heading.info"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "default": "footer",
+          "label": "t:sections.footer.blocks.link_list.settings.menu.label",
+          "info": "t:sections.footer.blocks.link_list.settings.menu.info"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "default": false,
+      "label": "t:sections.footer.settings.show_social.label"
+    },
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.footer.settings.background_color.label",
+      "options": [
+        {
+          "group": "Primitives",
+          "value": "bg-p-darkest",
+          "label": "Darkest"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-dark",
+          "label": "Dark"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-neutral",
+          "label": "Neutral"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-light",
+          "label": "Light"
+        },
+        {
+          "group": "Primitives",
+          "value": "bg-p-lightest",
+          "label": "Lightest"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-foreground",
+          "label": "Foreground"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-foreground-secondary",
+          "label": "Foreground Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-background",
+          "label": "Background"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-background-secondary",
+          "label": "Background Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-primary",
+          "label": "Brand Primary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-secondary",
+          "label": "Brand Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-primary-contrast",
+          "label": "Brand Primary Contrast"
+        },
+        {
+          "group": "Tokens",
+          "value": "bg-t-brand-secondary-contrast",
+          "label": "Brand Secondary Contrast"
+        }
+      ],
+      "default": "bg-t-background-secondary"
+    },
+    {
+      "type": "select",
+      "id": "text_color",
+      "label": "t:sections.footer.settings.text_color.label",
+      "options": [
+        {
+          "group": "Primitives",
+          "value": "text-p-darkest",
+          "label": "Darkest"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-dark",
+          "label": "Dark"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-neutral",
+          "label": "Neutral"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-light",
+          "label": "Light"
+        },
+        {
+          "group": "Primitives",
+          "value": "text-p-lightest",
+          "label": "Lightest"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-foreground",
+          "label": "Foreground"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-foreground-secondary",
+          "label": "Foreground Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-background",
+          "label": "Background"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-background-secondary",
+          "label": "Background Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-primary",
+          "label": "Brand Primary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-secondary",
+          "label": "Brand Secondary"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-primary-contrast",
+          "label": "Brand Primary Contrast"
+        },
+        {
+          "group": "Tokens",
+          "value": "text-t-brand-secondary-contrast",
+          "label": "Brand Secondary Contrast"
+        }
+      ],
+      "default": "text-p-darkest"
+    }
+  ]
+}
+{% endschema %}

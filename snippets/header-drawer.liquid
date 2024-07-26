@@ -1,0 +1,131 @@
+{% comment %}
+  Renders a header drawer menu for mobile and desktop.
+
+  Usage:
+  {% render 'header-drawer' %}
+{% endcomment %}
+
+<div id='menu-drawer' class='grid grid-cols-1 min-h-full grid-rows-[1fr,auto] pb-sm gap-y-sm'>
+  <nav>
+    <ul class='list-none px-sm grid grid-cols-1 gap-y-sm' role='list'>
+      {%- for link in section.settings.menu.links -%}
+        <li class='list-none'>
+          {%- if link.links != blank -%}
+            {%- assign modal_id = 'Details-menu-drawer-menu-item-' | append: forloop.index -%}
+            {%- capture toggle_button -%}
+              <button class="h6 inline-flex items-center justify-between w-full">
+                <span>{{- link.title -}}</span>
+                {% render 'icon' with 'icon-arrow', size: 16 %}
+              </button>
+            {%- endcapture -%}
+            {%- render 'modal-dialog-toggle', modal_id: modal_id, toggle_element: toggle_button, class: 'w-full' -%}
+
+            {%- capture modal_content -%}
+              <ul class='list-none p-0 px-sm grid grid-cols-1 gap-y-sm' role='list' tabindex='-1'>
+                {%- for childlink in link.links -%}
+                  <li class="list-none">
+                    {%- if childlink.links == blank -%}
+                      <a
+                        id='HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}'
+                        href='{{ childlink.url }}'
+                        class="h6 {% if childlink.current %}underline underline-offset-4{% endif %}"
+                        {% if childlink.current %}
+                          aria-current='page'
+                        {% endif %}
+                      >
+                        {{ childlink.title | escape }}
+                      </a>
+                    {%- else -%}
+                      {%- assign sub_modal_id = 'Details-menu-drawer-' | append: link.handle | append: childlink.handle -%}
+
+                      {%- capture sub_toggle_button -%}
+                        <button class="h6 inline-flex items-center justify-between w-full">
+                          <span>{{- childlink.title -}}</span>
+                          {% render 'icon' with 'icon-arrow', size: 16 %}
+                        </button>
+                      {%- endcapture -%}
+
+                      {%- render 'modal-dialog-toggle', modal_id: sub_modal_id, toggle_element: sub_toggle_button, class: 'w-full' -%}
+
+                      {%- capture sub_modal_content -%}
+                        <ul
+                          class='list-none px-sm grid grid-cols-1 gap-y-sm'
+                          role='list'
+                          tabindex='-1'
+                        >
+                          {%- for grandchildlink in childlink.links -%}
+                            <li class="list-none">
+                              <a
+                                id='HeaderDrawer-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}'
+                                href='{{ grandchildlink.url }}'
+                                class="h6 {% if grandchildlink.current %}underline underline-offset-4{% endif %}"
+                                {% if grandchildlink.current %}
+                                  aria-current='page'
+                                {% endif %}
+                              >
+                                {{ grandchildlink.title | escape }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endcapture -%} 
+                      
+                      {%- render 'modal-dialog', id: sub_modal_id, content: sub_modal_content, type: 'drawer', close_on_backdrop_click: true, title: childlink.title -%}
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endcapture -%}
+
+            {%- render 'modal-dialog',
+              id: modal_id,
+              content: modal_content,
+              type: 'drawer',
+              close_on_backdrop_click: true,
+              title: link.title
+            -%}
+          {%- else -%}
+            <a
+              id='HeaderDrawer-{{ link.handle }}'
+              href='{{ link.url }}'
+              class='h6 {% if link.current %}underline underline-offset-4{% endif %}'
+              {% if link.current %}
+                aria-current='page'
+              {% endif %}
+            >
+              {{ link.title | escape }}
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+  <div class='grid grid-cols-1 gap-xs content-start px-sm'>
+    {%- if shop.customer_accounts_enabled -%}
+      <a
+        href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
+        class='btn'
+        variant='primary'
+      >
+        {% render 'icon' with 'icon-account', size: 18 %}
+        {%- liquid
+          if customer
+            echo 'customer.account_fallback' | t
+          else
+            echo 'customer.log_in' | t
+          endif
+        -%}
+      </a>
+    {%- endif -%}
+
+    {%- liquid
+      if localization.available_countries.size > 1
+        render 'i18n-select', type: 'currency'
+      endif
+
+      if localization.available_languages.size > 1
+        render 'i18n-select', type: 'language'
+      endif
+    -%}
+  </div>
+</div>

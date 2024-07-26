@@ -1,0 +1,17 @@
+<details class='group/search inline-flex' data-search>
+  <summary class='flex items-center gap-1'>
+    <span class='group-open/search:hidden pointer-events-none inline-flex'>
+      {%- render 'icon' with 'icon-search', size: 18 -%}
+    </span>
+
+    <span class='hidden group-open/search:inline-flex pointer-events-none'>
+      {%- render 'icon' with 'icon-close', size: 18 -%}
+    </span>
+
+    <span class='sr-only'>{{ 'general.search.search' | t }}</span>
+  </summary>
+
+  <dialog class='hidden group-open/search:block absolute w-full left-0 top-full bg-gray00 shadow-sm py-2 px-6 z-30 lg:fixed lg:top-[var(--header-height)] lg:py-6'>
+    {% render 'search-form', input_id: 'header-search' %}
+  </dialog>
+</details>

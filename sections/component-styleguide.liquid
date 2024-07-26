@@ -1,0 +1,428 @@
+<div class='grid grid-cols-1 divide-y divide-t-border py-lg'>
+  <section class='flex flex-col px-pagemargin gap-lg py-lg'>
+    <h1>Type Styles</h1>
+    <div class='grid grid-cols-1 md:grid-cols-2'>
+      <p class='text-t-foreground-secondary p'>
+        We use fluid scaling for typography, meaning we don’t need to specify exact breakpoints. Instead, we define
+        sizes for desktop & mobile and use relative units for the other values to allow the styles to scale seamlessly
+        without much work. With this in mind, it’s important to ensure line-height and letter-spacing are set in
+        percentage (%) values, not pixels.
+      </p>
+    </div>
+    <div class='grid grid-cols-1 gap-md'>
+      <h1>Heading 1</h1>
+      <h2>Heading 2</h2>
+      <h3>Heading 3</h3>
+      <h4>Heading 4</h4>
+      <h5>Heading 5</h5>
+      <h6>Heading 6</h6>
+      <p>Body</p>
+      <p class='caption'>Caption</p>
+      <p class='utility'>Utility</p>
+    </div>
+  </section>
+
+  <section class='flex flex-col px-pagemargin gap-lg py-lg'>
+    <h1>Fluid Utility</h1>
+    <p class='text-t-foreground-secondary p'>
+      We <a>use</a> fluid scaling for utility classes, meaning we don’t need to specify exact breakpoints. Instead, we
+      define sizes for desktop & mobile and use relative units for the other values to allow the styles to scale
+      seamlessly without much work.
+    </p>
+    <div class='grid grid-cols-1 gap-md bg-t-background-secondary p-md'>
+      <p>Following are the utilities are available available:</p>
+      <ul class='list-disc list-inside'>
+        <li class='fluid-text-[10|12]'><code>fluid-text-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-line-height-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-gap-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-pl-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-pr-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-pb-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-pt-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-ml-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-mr-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-mb-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-mt-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-inset-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-top-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-right-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-bottom-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-left-[mobile|desktop]</code></li>
+        <li class='fluid-text-[10|12]'><code>fluid-size-[mobile|desktop]</code></li>
+      </ul>
+
+      <p>
+        Note: Replace <code>mobile</code> with Mobile Pixel Size Base and <code>desktop</code> with Desktop Size base
+      </p>
+    </div>
+    <div class='grid grid-cols-1 gap-md'>
+      <h3 class='underline'>Examples:</h3>
+      <p class='fluid-text-[12|16]'>Fluid, 12|16</p>
+      <p class='fluid-text-[30|70]'>Fluid, 30|70</p>
+      <span class='spacing-token fluid-size-[200|400]'>
+        <pre>fluid-size-[200|400]</pre>
+      </span>
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-md py-lg'>
+    <h1>Buttons</h1>
+    <div class='grid grid-cols-1 lg:grid-cols-3 gap-md'>
+      <div class='grid grid-cols-1 border border-dashed rounded-sm gap-sm border-t-border p-pagemargin'>
+        <button class='btn' variant='primary'>Button Primary</button>
+        <button class='btn' disabled variant='primary'>Button Primary</button>
+        <button class='btn' variant='primary'>
+          <svg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <path d="M7.08334 9.58335L3.07292 5.00002L7.08334 0.416684" stroke="currentColor" />
+          </svg>
+          <span>Button Primary</span>
+          <svg
+            width='10'
+            height='10'
+            viewBox='0 0 10 10'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            class='rotate-180'
+          >
+            <path d="M7.08334 9.58335L3.07292 5.00002L7.08334 0.416684" stroke="currentColor" />
+          </svg>
+        </button>
+      </div>
+
+      <div class='grid grid-cols-1 border border-dashed rounded-sm gap-sm border-t-border p-pagemargin'>
+        <button class='btn' variant='secondary'>Secondary Button</button>
+        <button class='btn' disabled variant='secondary'>Secondary Button</button>
+        <button class='btn' variant='secondary'>
+          <svg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'>
+            <path d="M7.08334 9.58335L3.07292 5.00002L7.08334 0.416684" stroke="currentColor" />
+          </svg>
+          <span>Secondary Button</span>
+          <svg
+            width='10'
+            height='10'
+            viewBox='0 0 10 10'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            class='rotate-180'
+          >
+            <path d="M7.08334 9.58335L3.07292 5.00002L7.08334 0.416684" stroke="currentColor" />
+          </svg>
+        </button>
+      </div>
+
+      <div class='grid grid-cols-1 border border-dashed rounded-sm gap-sm border-t-border p-pagemargin'>
+        <div class='text-center'><button class='btn' variant='tertiary'>Tertiary Button</button></div>
+        <div class='text-center'><button class='btn' disabled variant='tertiary'>Tertiary Button</button></div>
+
+        <div class='text-center'>
+          <button class='btn' variant='tertiary'>
+            <svg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'>
+              <path d="M7.08334 9.58335L3.07292 5.00002L7.08334 0.416684" stroke="currentColor" />
+            </svg>
+            <span>Tertiary Button</span>
+            <svg
+              width='10'
+              height='10'
+              viewBox='0 0 10 10'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+              class='rotate-180'
+            >
+              <path d="M7.08334 9.58335L3.07292 5.00002L7.08334 0.416684" stroke="currentColor" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Spacing</h1>
+    <div class='flex flex-col-reverse flex-wrap sm:flex-row gap-lg'>
+      <span class='spacing-token size-2xs'> 2xs </span>
+      <span class='spacing-token size-xs'> xs </span>
+      <span class='spacing-token size-sm'> sm </span>
+      <span class='spacing-token size-md'> md </span>
+      <span class='spacing-token size-lg'> lg </span>
+      <span class='spacing-token size-xl'> xl </span>
+      <span class='spacing-token size-2xl'> 2xl </span>
+      <span class='spacing-token size-3xl'> 3xl </span>
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Border Radius</h1>
+    <div class='flex flex-col-reverse flex-wrap sm:flex-row gap-lg'>
+      <span class='inline-flex items-center justify-center rounded-sm spacing-token size-3xl'> rounded-sm </span>
+
+      <span class='inline-flex items-center justify-center rounded-md spacing-token size-3xl'> rounded-md </span>
+
+      <span class='inline-flex items-center justify-center rounded-lg spacing-token size-3xl'> rounded-lg </span>
+
+      <span class='inline-flex items-center justify-center spacing-token size-3xl rounded-rounded'>
+        rounded-rounded
+      </span>
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Colors</h1>
+    <div class='flex flex-col flex-wrap justify-stretch sm:flex-row'>
+      <span class='color-token bg-t-brand-primary'>Brand Primary</span>
+      <span class='color-token bg-t-brand-secondary'>Brand Secondary</span>
+      <span class='color-token bg-t-foreground text-t-background'>Foreground</span>
+      <span class='color-token bg-t-foreground-secondary'>Foreground Secondary</span>
+      <span class='color-token bg-t-background-secondary'>Background Secondary</span>
+      <span class='border color-token bg-t-background border-t-border'>Background</span>
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Form Controls</h1>
+    <div class='grid grid-cols-1 md:grid-cols-4 gap-md'>
+      {%- render 'form-field',
+        kind: 'input',
+        name: 'first_name',
+        id: 'first_name',
+        required: true,
+        help_text: 'Some help text here',
+        label: 'First Name'
+      -%}
+
+      {%- render 'form-field',
+        kind: 'input',
+        name: 'first_name',
+        id: 'first_name',
+        required: true,
+        help_text: 'Some help text here',
+        label: 'First Name',
+        error: true,
+        error_text: 'This field is required'
+      -%}
+
+      {%- render 'form-field',
+        kind: 'input',
+        disabled: true,
+        name: 'first_name',
+        id: 'first_name',
+        required: true,
+        value: 'John',
+        label: 'First Name'
+      -%}
+
+      {%- render 'form-field', kind: 'input', type: 'email', name: 'email', id: 'email', label: 'Email' -%}
+
+      {%- render 'form-field',
+        kind: 'textarea',
+        name: 'message',
+        id: 'message',
+        label: 'Message',
+        help_text: 'Provide a message'
+      -%}
+      {%- render 'form-field', kind: 'textarea', name: 'message', id: 'message', label: 'Message', error: true -%}
+
+      {%- render 'form-field',
+        kind: 'select',
+        name: 'countries',
+        id: 'country',
+        label: 'Countries',
+        options: country_option_tags,
+        help_text: 'Select a country'
+      -%}
+
+      {%- render 'form-field',
+        kind: 'select',
+        name: 'countries',
+        id: 'country',
+        label: 'Countries',
+        options: country_option_tags,
+        help_text: 'Select a country',
+        error: true,
+        error_text: 'Please select a country'
+      -%}
+
+      <div class='flex flex-wrap col-span-1 md:col-span-4 gap-x-sm'>
+        {%- render 'form-field', kind: 'switch', id: 'switch', name: 'switch', label: 'Switch', value: 'something' -%}
+
+        {%- render 'form-field',
+          kind: 'switch',
+          id: 'switch',
+          checked: true,
+          name: 'switch',
+          label: 'Switch',
+          value: 'something',
+          help_text: 'Some help text'
+        -%}
+
+        {%- render 'form-field',
+          kind: 'switch',
+          checked: true,
+          disabled: true,
+          name: 'switchdisabled',
+          label: 'Switch',
+          value: 'something',
+          help_text: 'Some help text'
+        -%}
+      </div>
+
+      <div class='flex flex-wrap col-span-1 md:col-span-4 gap-x-sm'>
+        {%- render 'form-field', kind: 'checkbox', name: 'checkbox1', label: 'Switch', value: 'something' -%}
+
+        {%- render 'form-field',
+          kind: 'checkbox',
+          checked: true,
+          name: 'checkbox2',
+          label: 'Switch',
+          value: 'something',
+          help_text: 'Some help text'
+        -%}
+
+        {%- render 'form-field',
+          kind: 'checkbox',
+          checked: true,
+          disabled: true,
+          name: 'checkbox3',
+          label: 'Switch',
+          value: 'something',
+          help_text: 'Some help text'
+        -%}
+      </div>
+
+      <div class='flex flex-wrap col-span-1 md:col-span-4 gap-x-sm'>
+        {%- render 'form-field', kind: 'radio', name: 'radio1', label: 'Radio', value: 'something' -%}
+
+        {%- render 'form-field',
+          kind: 'radio',
+          checked: true,
+          name: 'radio2',
+          label: 'Radio',
+          value: 'something',
+          help_text: 'Some help text'
+        -%}
+
+        {%- render 'form-field',
+          kind: 'radio',
+          checked: true,
+          disabled: true,
+          name: 'radio3',
+          label: 'Radio',
+          value: 'something',
+          help_text: 'Some help text'
+        -%}
+      </div>
+
+      {%- render 'form-field',
+        kind: 'select',
+        name: 'countries',
+        id: 'country',
+        label: 'Custom Select',
+        options: country_option_tags,
+        help_text: 'This is a custom Select field',
+        custom_select: true
+      -%}
+
+      {%- render 'form-field',
+        kind: 'select',
+        name: 'countries',
+        id: 'country',
+        multiple: true,
+        label: 'Multiple Custom Select',
+        options: country_option_tags,
+        help_text: 'This is a custom Select field',
+        custom_select: true
+      -%}
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Swiper Carousels</h1>
+
+    <div>
+      <swiper-container navigation='true' pagination='true' slides-per-view='1'>
+        {%- for i in (1..5) -%}
+          <swiper-slide class='grid aspect-video place-content-center items-center justify-center bg-p-neutral'>
+            <span
+              >Slide
+              {{- i -}}
+            </span>
+          </swiper-slide>
+        {%- endfor -%}
+      </swiper-container>
+    </div>
+
+    <div>
+      <h2 class='mb-4'>Product Cards</h2>
+
+      <swiper-container slides-per-view='auto'>
+        {% assign product_handles_arr = 'the-collection-snowboard-liquid,the-collection-snowboard-hydrogen,the-collection-snowboard-oxygen,'
+          | split: ','
+        %}
+
+        {% for handle in product_handles_arr %}
+          {% assign _product = all_products[handle] %}
+
+          <swiper-slide class='grid items-center justify-center px-2 w-7/12 md:w-4/12 lg:w-3/12'>
+            {% render 'product-card', product: _product, media_aspect_ratio: 'portrait' %}
+          </swiper-slide>
+        {% endfor %}
+      </swiper-container>
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Icons</h1>
+    <div class='flex flex-wrap gap-lg'>
+      {%- render 'icon' with 'icon-account', class='text-t-link' -%}
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Dialogs / Modals</h1>
+    {%- capture modal_content -%}
+      <h1>Inner modal</h1>
+    {%- endcapture -%}
+
+    {% render 'modal-dialog', content: modal_content, id: 'modal-test' %}
+    {% render 'modal-dialog-toggle', modal_id: 'modal-test', label: 'Toggle Modal' %}
+
+    {%- capture url -%}
+      {{ all_products['the-collection-snowboard-liquid'].url }}?view=quick-shop&layout=none
+    {%- endcapture -%}
+    {% render 'modal-dialog', url: url, id: 'modal-test-url' %}
+    {% render 'modal-dialog-toggle', modal_id: 'modal-test-url', label: 'Modal with URL Content' %}
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1>Dynamic Product Card</h1>
+    <div>
+      <dynamic-product-card handle='the-3p-fulfilled-snowboard' template='product-card-mini'></dynamic-product-card>
+    </div>
+  </section>
+
+  <section class='grid grid-cols-1 px-pagemargin gap-lg py-lg'>
+    <h1 class='h2'>Section Injection with Live Params</h1>
+    <div class='max-w-xl grid grid-cols-1 gap-sm'>
+      {%- render 'form-field',
+        kind: 'input',
+        name: 'q',
+        value: 'the',
+        id: 'predictive-search-input',
+        required: true,
+        help_text: 'Enter something to search for',
+        label: 'Search Input'
+      -%}
+      <script>
+        document.getElementById('predictive-search-input').addEventListener('input', function () {
+          document.getElementById('predictive-search').setAttribute('params', `?q=${this.value}`)
+        })
+      </script>
+      {%- render '@needs-script', entries: 'core-inject-section' -%}
+      <section-injection
+        id='predictive-search'
+        section-name='predictive-search'
+        base-url='{{ routes.predictive_search_url }}'
+        params='?q=the'
+      ></section-injection>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,75 @@
+{%- if recommendations.performed? -%}
+  {{ recommendations.products_count | json }}
+  {{ recommendations.intent | json }}
+  {{ recommendations | json }}
+  {%- if recommendations.products_count > 0 -%}
+    <div
+      section-id='{{ section.id }}'
+      class='grid grid-cols-1 gap-y-sm 2xl:container px-pagemargin py-sm'
+      data-url='{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4&intent=related'
+    >
+      {% if section.settings.title != blank %}
+        <h2>{{ section.settings.title }}</h2>
+      {% endif %}
+
+      {%- render 'product-cards-carousel', products: recommendations.products -%}
+    </div>
+  {%- endif -%}
+{%- else -%}
+  {%- render '@needs-script', entries: 'core-inject-section' -%}
+  <section-injection
+    id='{{ section.id }}'
+    section-name='{{ section.id }}'
+    base-url='{{ routes.product_recommendations_url }}'
+    params='?product_id={{ product.id }}&limit={{ section.settings.limit }}&intent={{ section.settings.intent }}'
+  ></section-injection>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.product-recommendations.name",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.product-recommendations.settings.title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.product-recommendations.settings.title",
+      "default": "You may also like"
+    },
+    {
+      "type": "number",
+      "id": "limit",
+      "label": "t:sections.product-recommendations.settings.limit",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "t:sections.product-recommendations.settings.intent",
+      "options": [
+        {
+          "value": "related",
+          "label": "t:sections.product-recommendations.settings.intent__related"
+        },
+        {
+          "value": "complementary",
+          "label": "t:sections.product-recommendations.settings.intent__complementary"
+        }
+      ],
+      "default": "related"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Product",
+      "name": "t:sections.product-recommendations.name"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}

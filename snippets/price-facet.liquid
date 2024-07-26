@@ -1,0 +1,52 @@
+<div class='flex gap-2 items-center'>
+  <span class='field-currency'>{{ cart.currency.symbol }}</span>
+
+  {% capture attributes %}
+    data-pattern='\d| |,|\.'
+    data-min='0'
+    data-max='{{ filter.range_max | money_without_currency }}'
+    inputmode='decimal'
+  {% endcapture %}
+
+  <div class='flex'>
+    {% liquid
+      assign input_id = id_prefix | append: filter.label | append: 'GTE'
+      assign label = 'sections.collection_template.from' | t
+      assign placeholder = 0
+      assign value = filter.min_value.value | money_without_currency | default: ''
+    %}
+
+    {%- render 'form-field',
+      kind: 'input',
+      name: filter.min_value.param_name,
+      id: input_id,
+      label: label,
+      placeholder: placeholder,
+      attributes: attributes,
+      value: value
+    -%}
+  </div>
+
+  {%- if filter_type != 'vertical' -%}
+    <span class='field-currency'>{{ cart.currency.symbol }}</span>
+  {%- endif -%}
+
+  <div class='flex'>
+    {% liquid
+      assign input_id = id_prefix | append: filter.label | append: 'LTE'
+      assign label = 'sections.collection_template.to' | t
+      assign placeholder = filter.range_max | money_without_currency
+      assign value = filter.max_value.value | money_without_currency | default: ''
+    %}
+
+    {%- render 'form-field',
+      kind: 'input',
+      name: filter.max_value.param_name,
+      id: input_id,
+      label: label,
+      placeholder: placeholder,
+      attributes: attributes,
+      value: value
+    -%}
+  </div>
+</div>

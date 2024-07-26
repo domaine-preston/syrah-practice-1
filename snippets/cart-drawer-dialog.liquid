@@ -1,0 +1,12 @@
+{% comment %}
+  Renders a cart drawer dialog base with cart-drawer content inside it
+{% endcomment %}
+
+{%- liquid
+  capture content
+    render 'cart-drawer'
+  endcapture
+
+  assign title = 'sections.cart.title' | t
+  render 'modal-dialog', id: 'cart-drawer-dialog', anchor: 'right', content: content, type: 'drawer', close_on_backdrop_click: true, title: title
+-%}

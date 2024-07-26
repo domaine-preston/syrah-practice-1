@@ -1,0 +1,188 @@
+{%- liquid
+  assign login_page_email = 'customer.login_page.email' | t
+  assign login_page_password = 'customer.login_page.password' | t
+
+  assign recover_title = 'customer.recover_password.title' | t
+  assign recover_subtext = 'customer.recover_password.subtext' | t
+
+  assign login_title = 'customer.login_page.title' | t
+
+  if section.settings.enable_shop_login_button == false
+    assign hide_shop_login_button = true
+  endif
+-%}
+
+{%- capture recover_form_content -%}
+  {%- form 'recover_customer_password', class: 'grid grid-cols-1 gap-y-sm' -%}
+    {% assign recover_success = form.posted_successfully? %}
+    <div>
+      {% liquid
+        assign has_error = blank
+        assign error_text = blank
+        if form.errors
+          assign has_error = true
+          assign error_text = form.errors.messages.form
+        endif
+      %}
+
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'email',
+        name: 'email',
+        id: 'RecoverEmail',
+        label: login_page_email,
+        autocomplete: 'email',
+        error: has_error,
+        error_text: error_text
+      -%}
+    </div>
+
+    <div class='text-center mt-xs'>
+      <button class='btn' variant='primary'>
+        {{ 'customer.login_page.submit' | t }}
+      </button>
+    </div>
+
+    <div class='text-center'>
+      <a href='#login' class='btn' variant='tertiary'>
+        {{ 'customer.login_page.cancel' | t }}
+      </a>
+    </div>
+  {%- endform -%}
+{%- endcapture -%}
+
+{%- capture recover_form -%}
+  {%- render 'customer-form-content', content: recover_form_content, title: recover_title, subtext: recover_subtext -%}
+{%- endcapture -%}
+
+{%- capture login_form_content -%}
+  <div class="grid grid-cols-1 gap-sm">
+    {%- if recover_success == true -%}
+      <h3 class='flex items-center mt-4 p text-left' tabindex='-1' autofocus>
+        {%- render 'icon', icon: 'icon-success', class: 'min-w-5 mr-2', size: 20 -%}
+        {{ 'customer.recover_password.success' | t }}
+      </h3>
+    {%- endif -%}
+    {%- form 'customer_login', class: 'grid grid-cols-1 gap-y-xs', novalidate: 'novalidate' -%}
+      {%- render 'form-errors', form: form -%}
+
+      {%- if shop.features.login_with_shop_classic_customer_accounts? -%}
+        <section name='sign-in-with-shop-provider'>
+          {{ shop | login_button: hide_button: hide_shop_login_button }}
+
+          {%- unless hide_shop_login_button -%}
+            <p>
+              {{ 'customer.login_page.alternate_provider_separator' | t }}
+            </p>
+          {%- endunless -%}
+        </section>
+      {%- endif -%}
+
+      <div>
+        {% liquid
+          assign has_error = blank
+          if form.errors contains 'form'
+            assign has_error = true
+          endif
+        %}
+
+        {%- render 'form-field',
+          kind: 'input',
+          type: 'email',
+          name: 'customer[email]',
+          id: 'CustomerEmail',
+          autocomplete: 'email',
+          label: login_page_email,
+          error: has_error
+        -%}
+      </div>
+
+      {%- if form.password_needed -%}
+        <div>
+          {% liquid
+            assign has_error = blank
+            if form.errors contains 'form'
+              assign has_error = true
+            endif
+          %}
+
+          {%- render 'form-field',
+            kind: 'input',
+            type: 'password',
+            name: 'customer[password]',
+            id: 'CustomerPassword',
+            label: login_page_password,
+            error: has_error,
+            autocomplete: 'current-password'
+          -%}
+        </div>
+
+        <a href='#recover' class='btn block' variant='tertiary'>
+          {{ 'customer.login_page.forgot_password' | t }}
+        </a>
+      {%- endif -%}
+
+      <div class='text-center mt-xs'>
+        <button class='btn' variant='primary'>
+          {{ 'customer.login_page.sign_in' | t }}
+        </button>
+      </div>
+
+      <div class='text-center'>
+        <a href='{{ routes.account_register_url }}' class='btn' variant='tertiary'>
+          {{ 'customer.login_page.create_account' | t }}
+        </a>
+      </div>
+    {%- endform -%}
+
+    {%- if shop.checkout.guest_login -%}
+      <div class="text-center">
+        <h2 class="sr-only">{{ 'customer.login_page.guest_title' | t }}</h2>
+
+        {%- form 'guest_login' -%}
+          <button class='btn' variant='tertiary'>
+            {{ 'customer.login_page.guest_continue' | t }}
+          </button>
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+  </div>
+{%- endcapture -%}
+
+{%- capture login_form -%}
+  {%- render 'customer-form-content', content: login_form_content, title: login_title -%}
+{%- endcapture -%}
+
+<div id='recover' class='peer hidden target:block'>
+  {{- recover_form -}}
+</div>
+
+<div class='peer-target:hidden'>
+  {{- login_form -}}
+</div>
+
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+    {%- when '@app' -%}
+      {% render block %}
+  {%- endcase -%}
+{%- endfor -%}
+
+{% schema %}
+{
+  "name": "t:sections.main-login.name",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_shop_login_button",
+      "label": "t:sections.main-login.shop_login_button.enable",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

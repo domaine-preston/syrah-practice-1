@@ -1,0 +1,18 @@
+{% comment %}
+  Renders the Cart Note input field. If the setting is enabled on theme settings, the input field will be displayed.
+{% endcomment %}
+
+{%- if settings.show_cart_note or true -%}
+  {%- assign element_id = id | default: 'cart-note' -%}
+  {%- assign form = form | default: 'form' -%}
+  <cart-note class='grid grid-cols-1 gap-2xs h-fit'>
+    <label for='{{- element_id -}}' class='utility'>{{ 'sections.cart.note' | t }}</label>
+    <textarea
+      class='border border-solid border-t-border p-xs p'
+      name='note'
+      form='{{- form -}}'
+      id='{{- element_id -}}'
+      placeholder='{{ 'sections.cart.note' | t }}'
+    >{{ cart.note }}</textarea>
+  </cart-note>
+{%- endif -%}

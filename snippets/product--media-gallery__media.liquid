@@ -1,0 +1,35 @@
+{% comment %}
+  Render the media snippet based on the media type.
+
+  Accepts the following parameters:
+  - media: The media object to render.
+  - preload: Whether to preload the media. (default: false)
+  - widths: The widths to use for the image. (default: [400, 800, 1200, 1600, 2000, 2400])
+  - object_fit: The object fit to use for the image. (default: 'contain')
+  - fetchpriority: The fetch priority to use for the image. (default: 'auto')
+  - width: The width to use for the image. (default: 400)
+  - loading: The loading strategy to use for the image. (default: 'lazy')
+  - preview: Whether to show the preview image. (default: false)
+
+  Documentation:
+    - https://shopify.dev/docs/api/liquid/filters/external_video_tag
+    - https://shopify.dev/docs/api/liquid/filters/video_tag
+{% endcomment %}
+
+{%- liquid
+  assign media_type = media.media_type
+  assign current_media = media
+  if preview
+    assign media_type = 'image'
+    assign current_media = media.preview_image
+  endif
+
+  case media_type
+    when 'image'
+      render 'image', image: current_media, preload: preload, widths: widths, object_fit: object_fit, class: 'h-full w-full h-full absolute inset-0', alt: media.alt, fetchpriority: fetchpriority, width: width, loading: loading
+    when 'video'
+      render 'deferred-media', video: current_media, video_alt: media.alt, class: 'w-full inset-0 m-auto absolute aspect-[16/9]'
+    when 'external_video'
+      render 'deferred-media', video: current_media, video_alt: media.alt, class: 'w-full inset-0 m-auto absolute aspect-[16/9]'
+  endcase
+-%}

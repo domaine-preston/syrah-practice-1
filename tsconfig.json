@@ -1,0 +1,15 @@
+{
+  "extends": "@meetdomaine/project-syrah-config/config/tsconfig",
+  "include": [
+    "src/custom_typings/window.d.ts",
+    "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx"
+ ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true
+  }
+}

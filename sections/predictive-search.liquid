@@ -1,0 +1,200 @@
+{% capture queries_and_collections %}
+<div>
+  <h2 id='predictive-search-queries'>
+    {{- 'general.search.suggestions' | t -}}
+  </h2>
+  <ul
+    id='predictive-search-results-queries-list'
+    role='group'
+    aria-labelledby='predictive-search-queries'
+  >
+    {%- for query in predictive_search.resources.queries -%}
+      <li
+        class="aria-selected:bg-p-light"
+        id='predictive-search-option-query-{{ forloop.index }}'
+        role='option'
+        aria-selected='false'
+      >
+        <a href='{{ query.url }}' tabindex='-1'>
+          <div>
+            <p
+              aria-label='{{ query.text }}'
+            >
+              {{ query.styled_text }}
+            </p>
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+    {%- for collection in predictive_search.resources.collections -%}
+      <li
+        class="aria-selected:bg-p-light"
+        id='predictive-search-option-collection-{{ forloop.index }}'
+        role='option'
+        aria-selected='false'
+      >
+        <a href='{{ collection.url }}' tabindex='-1'>
+          <div>
+            <p>{{ collection.title | escape }}</p>
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+{% endcapture %}
+
+{% capture products %}
+<div>
+  <h2
+    id='predictive-search-products'
+  >
+    {{- 'general.search.products' | t -}}
+  </h2>
+  <ul
+    id='predictive-search-results-products-list'
+    role='group'
+    aria-labelledby='predictive-search-products'
+  >
+    {%- for product in predictive_search.resources.products -%}
+      <li
+        class="aria-selected:bg-p-light"
+        id='predictive-search-option-product-{{ forloop.index }}'
+        role='option'
+        aria-selected='false'
+      >
+        <a
+          href='{{ product.url }}'
+          tabindex='-1'
+        >
+          {%- if product.featured_media != blank -%}
+            <img
+              src='{{ product.featured_media | image_url: width: 150 }}'
+              alt='{{ product.featured_media.alt }}'
+              width='50'
+              height='{{ 50 | divided_by: product.featured_media.preview_image.aspect_ratio }}'
+            >
+          {%- endif -%}
+          <div>
+            <p>{{ product.title | escape }}</p>
+
+            {% render 'price', product: product, use_variant: true, show_badges: false %}
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+{% endcapture %}
+
+{% capture pages %}
+<div>
+  <h2
+    id='predictive-search-pages-mobile'
+  >
+    {{- 'general.search.pages' | t -}}
+  </h2>
+  <ul
+    id='predictive-search-results-pages-list-mobile'
+    role='group'
+    aria-labelledby='predictive-search-pages-mobile'
+  >
+    {%- for page in predictive_search.resources.pages -%}
+      <li
+        class="aria-selected:bg-p-light"
+        id='predictive-search-option-page-{{ forloop.index }}'
+        role='option'
+        aria-selected='false'
+      >
+        <a href='{{ page.url }}' tabindex='-1'>
+          <div>
+            <p>{{ page.title | escape }}</p>
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+    {%- for article in predictive_search.resources.articles -%}
+      <li
+        class="aria-selected:bg-p-light"
+        id='predictive-search-option-article-{{ forloop.index }}'
+        role='option'
+        aria-selected='false'
+      >
+        <a href='{{ article.url }}' tabindex='-1'>
+          <div>
+            <p>{{ article.title | escape }}</p>
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+{% endcapture %}
+
+{% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
+{%- if predictive_search.performed -%}
+  {% assign results_size = predictive_search.resources.queries.size
+    | plus: predictive_search.resources.collections.size
+    | plus: predictive_search.resources.pages.size
+    | plus: predictive_search.resources.articles.size
+    | plus: predictive_search.resources.products.size
+  %}
+
+  <div id='predictive-search-results' role='listbox' section-id='predictive-search'>
+    {%- if results_size -%}
+      <div
+        id='predictive-search-results-groups-wrapper'
+      >
+        {%- if predictive_search.resources.queries.size > 0 or predictive_search.resources.collections.size > 0 -%}
+          {{ queries_and_collections }}
+        {%- endif -%}
+
+        {%- if predictive_search.resources.products.size -%}
+          <div>
+            {{ products }}
+          </div>
+        {%- endif -%}
+
+        {%- if predictive_search.resources.articles.size > 0 or predictive_search.resources.pages.size > 0 -%}
+          {{ pages }}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div id='predictive-search-option-search-keywords'>
+      <button
+        tabindex='-1'
+        role='option'
+        class='aria-selected:bg-p-light'
+        aria-selected='false'
+        data-predictive-search-item
+      >
+        <span data-predictive-search-search-for-text>
+          {{- 'general.search.search_for' | t: terms: predictive_search.terms -}}
+        </span>
+        {% render 'icon' with 'icon-arrow', size: 18 %}
+      </button>
+    </div>
+  </div>
+
+  <span class='hidden' data-predictive-search-live-region-count-value>
+    {% liquid
+      if results_size == 0
+        echo 'general.search.no_results' | t: terms: predictive_search.terms
+      else
+        echo 'general.search.results_with_count' | t: count: results_size | append: ': '
+        if predictive_search.resources.queries.size > 0
+          assign count = predictive_search.resources.queries.size | plus: predictive_search.resources.collections.size
+          echo 'general.search.results_suggestions_with_count' | t: count: count | append: ', '
+        endif
+        if predictive_search.resources.pages.size > 0
+          assign count = predictive_search.resources.pages.size | plus: predictive_search.resources.articles.size
+          echo 'general.search.results_pages_with_count' | t: count: count | append: ', '
+        endif
+        if predictive_search.resources.products.size > 0
+          echo 'general.search.results_products_with_count' | t: count: predictive_search.resources.products.size
+        endif
+      endif
+    %}
+  </span>
+{%- endif -%}

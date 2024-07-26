@@ -1,0 +1,97 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - product: {Object} product object.
+  - unique_id: {String} unique id for the variant picker.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  - block: {Object} passing the block information. (optional)
+
+  Usage:
+  {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+{%- unless product.has_only_default_variant -%}
+  <variant-picker
+    id='variant-selects-{{ unique_id }}'
+    sub-section-id='{{ unique_id }}'
+    class='grid grid-cols-1 gap-y-sm'
+
+    {% if block != blank %}
+      {{ block.shopify_attributes }}
+    {% endif %}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        assign picker_type = 'button'
+        if swatch_count > 0
+          assign picker_type = 'swatch'
+        elsif option.values.size > 10
+          assign picker_type = 'dropdown'
+        endif
+      -%}
+      {%- if picker_type == 'swatch' -%}
+        <fieldset>
+          <legend class='caption mb-xs'>
+            {{ option.name }}:
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+          </legend>
+          <div class='flex items-start justify-start flex-wrap gap-xs'>
+            {% render 'product-variant-options',
+              product: product,
+              option: option,
+              unique_id: unique_id,
+              product_form_id: product_form_id,
+              picker_type: picker_type
+            %}
+          </div>
+        </fieldset>
+      {%- elsif picker_type == 'button' -%}
+        <fieldset>
+          <legend class='caption mb-xs'>{{ option.name }}</legend>
+          <div class='grid grid-cols-3 gap-1'>
+            {% render 'product-variant-options',
+              product: product,
+              option: option,
+              unique_id: unique_id,
+              product_form_id: product_form_id,
+              picker_type: picker_type
+            %}
+          </div>
+        </fieldset>
+      {%- else -%}
+        <div>
+          {%- capture select_options -%}
+            {%- render 'product-variant-options',
+              product: product,
+              option: option,
+              unique_id: unique_id,
+              product_form_id: product_form_id,
+              picker_type: picker_type
+            -%}
+          {%- endcapture -%}
+
+          {%- capture select_name -%}
+            options[{{ option.name | escape }}]
+          {%- endcapture -%}
+
+          {%- capture select_id -%}Option-{{ unique_id }}-{{ forloop.index0 }}{%- endcapture -%}
+          {%- render 'form-field',
+            kind: 'select',
+            name: select_name,
+            id: select_id,
+            form_id: product_form_id,
+            label: option.name,
+            options: select_options
+          -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <script type='application/json' data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+  </variant-picker>
+{%- endunless -%}

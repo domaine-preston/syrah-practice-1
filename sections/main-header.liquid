@@ -1,0 +1,185 @@
+{%- liquid
+  assign menu_modal_id = section.id | append: '-menu-modal'
+-%}
+
+<header class='grid items-center grid-cols-[1fr_auto_1fr] px-sm py-xs gap-y-2xs bg-p-lightest'>
+  <div class='flex items-center justify-start'>
+    {%- if section.settings.menu != blank -%}
+      {%- capture menu_toggle_button -%}
+        <button
+          aria-haspopup='dialog'
+          aria-controls='{{ menu_modal_id }}'
+          class="group/menutoggle inline-flex lg:hidden"
+        >
+          {%- render 'icon' with 'icon-hamburger', class: 'group-[[open]]/menutoggle:hidden text-[28px] md:text-[32px]' -%}
+          {%- render 'icon' with 'icon-close', class: 'group-[[open]]/menutoggle:inline-flex hidden text-[28px] md:text-[32px]' -%}
+          <span class="sr-only">{{ 'sections.header.menu' | t }}</span>
+        </button>
+      {%- endcapture -%}
+
+      {%- render 'modal-dialog-toggle',
+        modal_id: menu_modal_id,
+        label: 'Toggle Modal',
+        toggle_element: menu_toggle_button
+      -%}
+    {%- endif -%}
+  </div>
+
+  <div class='flex place-items-center place-content-center'>
+    {%- if request.page_type == 'index' -%}
+      <h1 class='inline-flex'>
+    {%- endif -%}
+    <a href='{{ routes.root_url }}' class='h6 uppercase inline-flex'>
+      {%- if settings.logo != blank -%}
+        <div
+          class='inline-flex w-auto h-10 md:h-auto md:w-[--header-logo-width]'
+          style='--header-logo-width: {{ settings.logo_width }}px'
+        >
+          {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+          {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+          {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
+          {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+          {%- render 'image',
+            width: 600,
+            image: settings.logo,
+            height: logo_height,
+            alt: logo_alt,
+            sizes: sizes,
+            widths: widths,
+            preload: true,
+            object_fit: 'contain'
+          -%}
+        </div>
+      {%- else -%}
+        <span class='h2'>{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+    {%- if request.page_type == 'index' -%}
+      </h1>
+    {%- endif -%}
+  </div>
+
+  <div class='flex items-center justify-end gap-xs md:gap-sm'>
+    {%- render 'header-search' -%}
+
+    {%- if shop.customer_accounts_enabled -%}
+      <a
+        href='{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}'
+        class='hidden md:inline-flex'
+      >
+        {% render 'icon' with 'icon-account', size: 18 %}
+        <span class='sr-only'>
+          {%- liquid
+            if customer
+              echo 'customer.account_fallback' | t
+            else
+              echo 'customer.log_in' | t
+            endif
+          -%}
+        </span>
+      </a>
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when '@app' -%}
+          {% render block %}
+      {%- endcase -%}
+    {%- endfor -%}
+
+    {%- capture menu_toggle_button -%}
+      <a
+        aria-haspopup='dialog'
+        aria-controls='cart-drawer-dialog'
+        href='{{ routes.cart_url }}' class='inline-flex place-items-center relative' id='cart-icon-bubble'>
+        {%- liquid
+          if cart == empty
+            render 'icon' with 'icon-cart-empty', size: 38
+          else
+            render 'icon' with 'icon-cart', size: 38
+          endif
+        -%}
+        <span class='sr-only'>{{ 'templates.cart.cart' | t }}</span>
+        <div class='empty:hidden absolute bg-p-brand-01 text-t-brand-primary-contrast rounded-full inline-flex items-center justify-center -top-1 -right-1 w-4 h-4 text-center text-xs leading-none'>
+          {%- render '@needs-script', entries: 'component-cart-total' -%}
+          <cart-total
+            translation='{ "cart_count": {{ 'sections.header.cart_count' | t: '###count###' | json }} }'
+          >
+            <span class='sr-only'>{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+          </cart-total>
+        </div>
+      </a>
+    {%- endcapture -%}
+
+    {%- if template.name == 'cart' -%}
+      {{- menu_toggle_button -}}
+    {%- else -%}
+      {%- render 'modal-dialog-toggle',
+        modal_id: 'cart-drawer-dialog',
+        label: 'Toggle Modal',
+        toggle_element: menu_toggle_button
+      -%}
+    {%- endif -%}
+  </div>
+  {%- if section.settings.menu != blank -%}
+    <div class='hidden lg:grid col-span-3'>
+      {% render 'header-mega-menu' %}
+    </div>
+  {%- endif -%}
+</header>
+
+{%- liquid
+  if section.settings.menu != blank
+    capture menu_modal_content
+      render 'header-drawer'
+    endcapture
+
+    assign menu_title = 'sections.header.menu' | t
+    render 'modal-dialog', id: menu_modal_id, content: menu_modal_content, type: 'drawer', close_on_backdrop_click: true, without_title: true, title: menu_title
+  endif
+-%}
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "limit": 1,
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "presets": [
+    {
+      "name": "t:sections.header.name"
+    }
+  ],
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "t:sections.header.settings.menu.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.enable_country_selector.header",
+      "info": "t:sections.header.settings.enable_country_selector.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_country_selector",
+      "default": true,
+      "label": "t:sections.header.settings.enable_country_selector.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.enable_language_selector.header",
+      "info": "t:sections.header.settings.enable_language_selector.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_selector",
+      "default": true,
+      "label": "t:sections.header.settings.enable_language_selector.label"
+    }
+  ]
+}
+{% endschema %}

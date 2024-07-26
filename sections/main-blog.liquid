@@ -1,0 +1,49 @@
+{%- paginate blog.articles by 6 -%}
+  <div class='2xl:container grid grid-cols-1 gap-y-md p-pagemargin'>
+    <h1 class='h3'>
+      {{ blog.title | escape }}
+    </h1>
+
+    <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-md items-start place-content-start'>
+      {%- for article in blog.articles -%}
+        {%- render 'article-card',
+          article: article,
+          media_aspect_ratio: article.image.aspect_ratio,
+          show_date: section.settings.show_date,
+          show_author: section.settings.show_author,
+          show_excerpt: true
+        -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if paginate.pages > 1 -%}
+      {%- render 'pagination', paginate: paginate -%}
+    {%- endif -%}
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "t:sections.main-blog.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "default": false,
+      "label": "t:sections.main-blog.settings.show_author.label"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.main-blog.settings.paragraph.content"
+    }
+  ]
+}
+{% endschema %}

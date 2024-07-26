@@ -1,0 +1,377 @@
+{
+  "$schema": "./node_modules/@meetdomaine/tailwind-syrah/schemas/07-2024.json",
+  "Typography": {
+    "Heading 1/Desktop": {
+      "fontSize": 64,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -3 },
+      "lineHeight": {
+        "unit": "PERCENT",
+        "value": 102.99999713897705
+      },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 1/Mobile": {
+      "fontSize": 48,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -3 },
+      "lineHeight": { "unit": "PERCENT", "value": 102.99999713897705 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 10,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 2/Desktop": {
+      "fontSize": 48,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -4 },
+      "lineHeight": { "unit": "PERCENT", "value": 110.00000238418579 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 10,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 2/Mobile": {
+      "fontSize": 38,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -4 },
+      "lineHeight": { "unit": "PERCENT", "value": 110.00000238418579 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 10,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 3/Desktop": {
+      "fontSize": 40,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -4 },
+      "lineHeight": { "unit": "PERCENT", "value": 110.00000238418579 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {
+        "fontFamily": { "type": "VARIABLE_ALIAS", "id": "VariableID:14260:283" }
+      }
+    },
+    "Heading 3/Mobile": {
+      "fontSize": 32,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -4 },
+      "lineHeight": { "unit": "PERCENT", "value": 110.00000238418579 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 4/Desktop": {
+      "fontSize": 32,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -3 },
+      "lineHeight": { "unit": "PERCENT", "value": 120.00000476837158 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 32,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 4/Mobile": {
+      "fontSize": 24,
+      "fontName": { "family": "PP Editorial New", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": -3 },
+      "lineHeight": { "unit": "PIXELS", "value": 32 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 5/Desktop": {
+      "fontSize": 24,
+      "fontName": { "family": "Maison Neue", "style": "Book" },
+      "letterSpacing": { "unit": "PERCENT", "value": -4 },
+      "lineHeight": { "unit": "PIXELS", "value": 32 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 5/Mobile": {
+      "fontSize": 18,
+      "fontName": { "family": "Maison Neue", "style": "Book" },
+      "letterSpacing": { "unit": "PERCENT", "value": -4 },
+      "lineHeight": { "unit": "PIXELS", "value": 24 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 6/Desktop": {
+      "fontSize": 18,
+      "fontName": { "family": "Maison Neue", "style": "Book" },
+      "letterSpacing": { "unit": "PERCENT", "value": -2 },
+      "lineHeight": { "unit": "PERCENT", "value": 129.99999523162842 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 18,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Heading 6/Mobile": {
+      "fontSize": 14,
+      "fontName": { "family": "Maison Neue", "style": "Book" },
+      "letterSpacing": { "unit": "PERCENT", "value": -2 },
+      "lineHeight": { "unit": "PERCENT", "value": 139.9999976158142 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Body/Desktop": {
+      "fontSize": 14,
+      "fontName": { "family": "Maison Neue", "style": "Book" },
+      "letterSpacing": { "unit": "PERCENT", "value": 0 },
+      "lineHeight": { "unit": "PERCENT", "value": 139.9999976158142 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 14,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Body/Mobile": {
+      "fontSize": 12,
+      "fontName": { "family": "Maison Neue", "style": "Book" },
+      "letterSpacing": { "unit": "PERCENT", "value": 0 },
+      "lineHeight": { "unit": "PERCENT", "value": 139.9999976158142 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 12,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Caption/Desktop": {
+      "fontSize": 12,
+      "fontName": { "family": "Maison Neue", "style": "Book" },
+      "letterSpacing": { "unit": "PERCENT", "value": 0 },
+      "lineHeight": { "unit": "PERCENT", "value": 100 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 12,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Caption/Mobile": {
+      "fontSize": 12,
+      "fontName": { "family": "NB Akademie Std", "style": "Regular" },
+      "letterSpacing": { "unit": "PERCENT", "value": 0 },
+      "lineHeight": { "unit": "PERCENT", "value": 100 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Utility/Desktop": {
+      "fontSize": 14,
+      "fontName": { "family": "Maison Neue", "style": "Mono" },
+      "letterSpacing": { "unit": "PERCENT", "value": 5 },
+      "lineHeight": { "unit": "PERCENT", "value": 100 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "UPPER",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Utility/Mobile": {
+      "fontSize": 12,
+      "fontName": { "family": "Maison Neue", "style": "Mono" },
+      "letterSpacing": { "unit": "PERCENT", "value": 5 },
+      "lineHeight": { "unit": "PERCENT", "value": 100 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 0,
+      "textCase": "UPPER",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Pullquote / Desktop": {
+      "fontSize": 24,
+      "fontName": { "family": "Inter", "style": "Light Italic" },
+      "letterSpacing": { "unit": "PIXELS", "value": 0 },
+      "lineHeight": { "unit": "PIXELS", "value": 28 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 16,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    },
+    "Pullquote / Mobile": {
+      "fontSize": 18,
+      "fontName": { "family": "Inter", "style": "Light Italic" },
+      "letterSpacing": { "unit": "PIXELS", "value": 0 },
+      "lineHeight": { "unit": "PIXELS", "value": 22 },
+      "paragraphIndent": 0,
+      "paragraphSpacing": 16,
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE",
+      "boundVariables": {}
+    }
+  },
+  "Sizing": {
+    "Space/2XS": { "desktop": 5, "mobile": 5 },
+    "Space/XS": { "desktop": 10, "mobile": 10 },
+    "Space/MD": { "desktop": 30, "mobile": 20 },
+    "Space/XL": { "desktop": 60, "mobile": 40 },
+    "Border/Radius SM": { "desktop": 4, "mobile": 4 },
+    "Border/Radius LG": { "desktop": 16, "mobile": 14 },
+    "Icon/Size S": { "desktop": 10, "mobile": 12 },
+    "Icon/Size M": { "desktop": 24, "mobile": 24 },
+    "Icon/Size L": { "desktop": 40, "mobile": 40 },
+    "Inputs/Button/Padding Left-Right": { "desktop": 20, "mobile": 15 },
+    "Inputs/Button/Gap": { "desktop": 10, "mobile": 10 },
+    "Border/Radius MD": { "desktop": 10, "mobile": 8 },
+    "Inputs/Button/Icon Size": { "desktop": 10, "mobile": 10 },
+    "Inputs/Forms/Padding": { "desktop": 10, "mobile": 10 },
+    "Inputs/Forms/Icon Size": { "desktop": 10, "mobile": 12 },
+    "Inputs/Forms/Horizontal Gap": { "desktop": 5, "mobile": 5 },
+    "Inputs/Forms/Vertical Gap": { "desktop": 10, "mobile": 10 },
+    "Inputs/Forms/Input Height": { "desktop": 40, "mobile": 40 },
+    "Space/None": { "desktop": 0, "mobile": 0 },
+    "Space/SM": { "desktop": 20, "mobile": 15 },
+    "Space/LG": { "desktop": 45, "mobile": 30 },
+    "Space/2XL": { "desktop": 80, "mobile": 60 },
+    "Space/3XL": { "desktop": 120, "mobile": 80 },
+    "Viewports/Viewport": { "desktop": 1440, "mobile": 390 },
+    "Viewports/Breakpoint": { "desktop": "Desktop", "mobile": "Mobile" },
+    "Border/Radius Rounded": { "desktop": 1000, "mobile": 1000 },
+    "Inputs/Button/Radius": { "desktop": 4, "mobile": 4 },
+    "Inputs/Button/Height": { "desktop": 40, "mobile": 40 },
+    "Space/Page Margin": { "desktop": 60, "mobile": 15 },
+    "Inputs/Forms/Radius": { "desktop": 4, "mobile": 4 },
+    "Inputs/Input Radius": { "desktop": 4, "mobile": 4 },
+    "Inputs/Input Height": { "desktop": 40, "mobile": 40 },
+    "Font Family/Primary": {
+      "desktop": "PP Editorial New",
+      "mobile": "PP Editorial New"
+    }
+  },
+  "Color": {
+    "Primitives/_Darkest": { "r": 0, "g": 0, "b": 0, "a": 1 },
+    "Primitives/_Dark": {
+      "r": 0.4000000059604645,
+      "g": 0.4000000059604645,
+      "b": 0.4000000059604645,
+      "a": 1
+    },
+    "Primitives/_Neutral": {
+      "r": 0.7215686440467834,
+      "g": 0.7215686440467834,
+      "b": 0.7215686440467834,
+      "a": 1
+    },
+    "Primitives/_Light": {
+      "r": 0.9647058844566345,
+      "g": 0.9647058844566345,
+      "b": 0.9647058844566345,
+      "a": 1
+    },
+    "Primitives/_Lightest": { "r": 1, "g": 1, "b": 1, "a": 1 },
+    "Primitives/_Brand-01": {
+      "r": 0.5705098509788513,
+      "g": 0.2866712212562561,
+      "b": 0.1270122081041336,
+      "a": 1
+    },
+    "Primitives/_Brand-02": {
+      "r": 0.6696180701255798,
+      "g": 0.769697904586792,
+      "b": 0.7916666865348816,
+      "a": 1
+    },
+    "Utility/_Success": {
+      "r": 0.14509804546833038,
+      "g": 0.7254902124404907,
+      "b": 0,
+      "a": 1
+    },
+    "Utility/_Error": { "r": 0.9254902005195618, "g": 0, "b": 0, "a": 1 },
+    "Utility/_Focus": { "r": 0, "g": 0.21960784494876862, "b": 1, "a": 1 },
+    "Utility/_Overlay": { "r": 0, "g": 0, "b": 0, "a": 0.5 },
+    "Checkout/_Accent": { "r": 0, "g": 0, "b": 1, "a": 1 },
+    "Checkout/_Buttons": {
+      "r": 0.0941176488995552,
+      "g": 0.47058823704719543,
+      "b": 0.7254902124404907,
+      "a": 1
+    },
+    "Checkout/_Form BG": { "r": 1, "g": 1, "b": 1, "a": 1 },
+    "Checkout/_Order Summary BG": {
+      "r": 0.9647058844566345,
+      "g": 0.9647058844566345,
+      "b": 0.9647058844566345,
+      "a": 1
+    },
+    "Tokens/Foreground": { "r": 0, "g": 0, "b": 0, "a": 1 },
+    "Tokens/Foreground Secondary": {
+      "r": 0.4000000059604645,
+      "g": 0.4000000059604645,
+      "b": 0.4000000059604645,
+      "a": 1
+    },
+    "Tokens/Background": { "r": 1, "g": 1, "b": 1, "a": 1 },
+    "Tokens/Background Secondary": {
+      "r": 0.9647058844566345,
+      "g": 0.9647058844566345,
+      "b": 0.9647058844566345,
+      "a": 1
+    },
+    "Tokens/Border": {
+      "r": 0.7215686440467834,
+      "g": 0.7215686440467834,
+      "b": 0.7215686440467834,
+      "a": 1
+    },
+    "Tokens/Link": {
+      "r": 0.5705098509788513,
+      "g": 0.2866712212562561,
+      "b": 0.1270122081041336,
+      "a": 1
+    },
+    "Tokens/Link Hover": {
+      "r": 0.4000000059604645,
+      "g": 0.4000000059604645,
+      "b": 0.4000000059604645,
+      "a": 1
+    },
+    "Tokens/Disabled": {
+      "r": 0.7215686440467834,
+      "g": 0.7215686440467834,
+      "b": 0.7215686440467834,
+      "a": 1
+    },
+    "Tokens/Brand Primary": {
+      "r": 0.5705098509788513,
+      "g": 0.2866712212562561,
+      "b": 0.1270122081041336,
+      "a": 1
+    },
+    "Tokens/Brand Secondary": {
+      "r": 0.6696180701255798,
+      "g": 0.769697904586792,
+      "b": 0.7916666865348816,
+      "a": 1
+    },
+    "Tokens/Brand Primary Contrast": { "r": 1, "g": 1, "b": 1, "a": 1 },
+    "Tokens/Brand Secondary Contrast": { "r": 0, "g": 0, "b": 0, "a": 1 }
+  }
+}

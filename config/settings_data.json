@@ -1,0 +1,61 @@
+{
+  "current": {
+    "colors_accent_1": "#000000",
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "blocks": {
+          "announcement-bar-0": {
+            "type": "announcement",
+            "settings": {
+              "text": "Welcome to our store",
+              "link": ""
+            }
+          }
+        },
+        "block_order": ["announcement-bar-0"],
+        "settings": {}
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo": "shopify://shop_images/HalfHelix_SmallIcon_Black.png",
+          "menu": "main-menu",
+          "enable_sticky_header": true
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "footer-0": {
+            "type": "link_list",
+            "settings": {
+              "heading": "Customer Service",
+              "menu": "footer"
+            }
+          },
+          "0ec48db8-bd5a-4f43-a0dd-6dfd93b48065": {
+            "type": "link_list",
+            "settings": {
+              "heading": "About",
+              "menu": "footer"
+            }
+          }
+        },
+        "block_order": ["footer-0", "0ec48db8-bd5a-4f43-a0dd-6dfd93b48065"],
+        "settings": {
+          "newsletter_heading": "Sign up to our emails",
+          "newsletter_caption": "Get glowing with our latest products and exclusive events.",
+          "show_social": false,
+          "enable_country_selector": true,
+          "enable_language_selector": true
+        }
+      },
+      "mini-cart": {
+        "type": "mini-cart",
+        "settings": {}
+      }
+    },
+    "content_for_index": []
+  }
+}

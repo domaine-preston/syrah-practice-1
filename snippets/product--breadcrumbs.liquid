@@ -1,0 +1,15 @@
+<nav aria-label='Breadcrumb' class='py-sx px-pagemargin 2xl:container'>
+  <ol class="[&_li_+_li]:before:content-['>']">
+    <li class='inline'>
+      <a href='{{- routes.root_url -}}'>Home</a>
+    </li>
+    {%- if collection.url -%}
+      <li class='inline'>
+        {{ collection.title | link_to: collection.url }}
+      </li>
+    {%- endif -%}
+    <li class='inline'>
+      <a class='pointer-events-none font-bold' href='{{ product.url }}' aria-current='page'>{{ product.title }}</a>
+    </li>
+  </ol>
+</nav>

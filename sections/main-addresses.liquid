@@ -1,0 +1,160 @@
+{%- paginate customer.addresses by 5 -%}
+  <div class='2xl:container px-pagemargin py-9 space-y-10 lg:space-y-12' data-customer-addresses>
+    <div class='grid grid-cols-2 gap-sm items-center'>
+      <h1 class='h2'>{{ 'customer.addresses.title' | t }}</h1>
+      <a class='btn justify-self-end' variant='tertiary' href='{{ routes.account_url }}'>
+        {{ 'customer.account.return' | t }}
+      </a>
+    </div>
+
+    {%- assign add_new_address_modal_id = 'add_new_address_modal' -%}
+    {%- capture menu_toggle_button -%}
+      <button
+        aria-haspopup='dialog'
+        aria-controls='{{ add_new_address_modal_id }}'
+        class="btn"
+        variant="tertiary"
+      >
+        {%- render 'icon' with 'icon-plus' -%}
+        <span>{{ 'customer.addresses.add_new' | t }}</span>
+      </button>
+    {%- endcapture -%}
+
+    {%- capture add_new_modal_content -%}
+      {%- render 'manage-address-modal', form_address: customer.new_address, form_id: 'addnew-address-form' -%}
+    {%- endcapture -%}
+
+    {%- liquid
+      render 'modal-dialog-toggle', modal_id: add_new_address_modal_id, toggle_element: menu_toggle_button
+      assign modal_title = 'customer.addresses.add_new' | t
+      render 'modal-dialog', id: add_new_address_modal_id, content: add_new_modal_content, type: 'drawer', close_on_backdrop_click: true, title: modal_title, anchor: 'right'
+    -%}
+
+    <ul
+      class='grid grid-cols-2 gap-sm md:grid-cols-3 xl:grid-cols-4 items-start place-content-start'
+      role='list'
+    >
+      {%- for address in customer.addresses -%}
+        <li class='grid grid-cols-1 gap-y-xs drop-shadow bg-t-background border border-t-border p-sm rounded'>
+          {%- if address == customer.default_address -%}
+            <p class='caption font-bold text-t-foreground-secondary'>{{ 'customer.addresses.default' | t }}</p>
+          {%- endif -%}
+
+          <div>
+            {{ address | format_address }}
+          </div>
+
+          {%- assign manage_address_modal_id = 'manage_address' | append: address.id -%}
+          {%- capture menu_toggle_button -%}
+            <button
+              aria-haspopup='dialog'
+              aria-controls='{{ manage_address_modal_id }}'
+              class="btn"
+              variant="tertiary"
+            >
+              {{ 'customer.addresses.edit' | t }}
+            </button>
+          {%- endcapture -%}
+          {%- assign form_id = 'EditAddress_' | append: manage_address_modal_id -%}
+
+          {%- capture manage_address_modal_content -%}
+            {%- render 'manage-address-modal', form_address: address, form_id: form_id, id: manage_address_modal_id -%}
+          {%- endcapture -%}
+
+          {%- liquid
+            assign modal_title = 'customer.addresses.edit_address' | t
+            render 'modal-dialog', id: manage_address_modal_id, content: manage_address_modal_content, type: 'drawer', close_on_backdrop_click: true, title: modal_title, anchor: 'right'
+          -%}
+          <div>
+            {%- render 'modal-dialog-toggle', modal_id: manage_address_modal_id, toggle_element: menu_toggle_button -%}
+            <form
+              method='post'
+              action='/account/addresses/{{ address.id }}'
+              class='ml-xs inline'
+            >
+              <input type='hidden' name='_method' value='delete'>
+              <button
+                class='btn'
+                variant='tertiary'
+                type='submit'
+                aria-label='{{ 'customer.addresses.delete' | t }} {{ forloop.index }}'
+              >
+                {{ 'customer.addresses.delete' | t }}
+              </button>
+            </form>
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if paginate.pages > 1 -%}
+      {%- if paginate.parts.size > 0 -%}
+        <nav class='pagination' role='navigation' aria-label='{{ 'general.pagination.label' | t }}'>
+          <ul role='list'>
+            {%- if paginate.previous -%}
+              <li>
+                <a href='{{ paginate.previous.url }}' aria-label='{{ 'general.pagination.previous' | t }}'>
+                  <svg aria-hidden='true' focusable='false' viewBox='0 0 10 6'>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                  </svg>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- for part in paginate.parts -%}
+              <li>
+                {%- if part.is_link -%}
+                  <a href='{{ part.url }}' aria-label='{{ 'general.pagination.page' | t: number: part.title }}'>
+                    {{- part.title -}}
+                  </a>
+                {%- else -%}
+                  {%- if part.title == paginate.current_page -%}
+                    <span aria-current='page' aria-label='{{ 'general.pagination.page' | t: number: part.title }}'>
+                      {{- part.title -}}
+                    </span>
+                  {%- else -%}
+                    <span>{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+
+            {%- if paginate.next -%}
+              <li>
+                <a href='{{ paginate.next.url }}' aria-label='{{ 'general.pagination.next' | t }}'>
+                  <svg aria-hidden='true' focusable='false' viewBox='0 0 10 6'>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                  </svg>
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when '@app' -%}
+          {% render block %}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+{%- endpaginate -%}
+
+<script>
+  window.addEventListener('load', () => {
+    typeof CustomerAddresses !== 'undefined' && new CustomerAddresses()
+  })
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-addresses.name",
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

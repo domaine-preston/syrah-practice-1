@@ -1,0 +1,105 @@
+{% comment %}
+  Renders product-card product-card__buy-buttons.
+  Accepts:
+  - product: {Object} product object.
+  - product_form_id: {String} product form id.
+  - show_dynamic_checkout: {Boolean} for the dynamic checkout. If true the dynamic checkout is rendered, false - not rendered (optional).
+
+  Usage:
+  {% render 'product-card__buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
+{% endcomment %}
+<div sub-section-id='buy-buttons-{{ product_form_id }}'>
+  {%- if product != blank -%}
+    {%- liquid
+      assign show_dynamic_checkout = show_dynamic_checkout | default: false, allow_false: true
+    -%}
+
+    <product-form
+      class='group/product-form'
+    >
+      <div class='product-form__error-message-wrapper' role='alert' hidden>
+        {%- render 'icon' with 'icon-error' -%}
+        <span class='product-form__error-message'></span>
+      </div>
+
+      {%- form 'product',
+        product,
+        id: product_form_id,
+        class: 'group-[.loading]/product-form:pointer-events-none',
+        novalidate: 'novalidate',
+        data-type: 'add-to-cart-form'
+      -%}
+        <input
+          type='hidden'
+          name='id'
+          class='hidden'
+          value='{{ product.selected_or_first_available_variant.id }}'
+          {% if product.selected_or_first_available_variant.available == false
+            or quantity_rule_soldout
+            or product.selected_or_first_available_variant == null
+          %}
+            disabled
+          {% endif %}
+        >
+
+        <div class='grid grid-cols-1 gap-y-xs'>
+          {%- liquid
+            assign check_against_inventory = true
+            if product.selected_or_first_available_variant.inventory_management != 'shopify' or product.selected_or_first_available_variant.inventory_policy == 'continue'
+              assign check_against_inventory = false
+            endif
+            if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+              assign quantity_rule_soldout = true
+            endif
+          -%}
+          <button
+            id='ProductSubmitButton-{{ section_id }}'
+            type='submit'
+            name='add'
+            variant='{% if show_dynamic_checkout %}secondary{% else %}primary{% endif %}'
+            class='btn'
+            {% if product.selected_or_first_available_variant.available == false
+              or quantity_rule_soldout
+              or product.selected_or_first_available_variant == null
+            %}
+              disabled
+            {% endif %}
+          >
+            <span>
+              {%- if product.selected_or_first_available_variant == null -%}
+                {{ 'products.product.unavailable' | t }}
+              {%- elsif product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- else -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- endif -%}
+            </span>
+          </button>
+          {%- if show_dynamic_checkout -%}
+            {{ form | payment_button }}
+          {%- endif -%}
+        </div>
+      {%- endform -%}
+    </product-form>
+  {%- else -%}
+    <div class='product-form'>
+      <div class='product-form__buttons form'>
+        <button
+          type='submit'
+          name='add'
+          variant='primary'
+          class='btn'
+          disabled
+        >
+          {{ 'products.product.sold_out' | t }}
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .shopify-payment-button__more-options[aria-hidden='true'] {
+    display: none;
+  }
+</style>

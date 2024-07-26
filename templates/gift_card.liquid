@@ -1,0 +1,97 @@
+<script src='{{ 'vendor/qrcode.js' | shopify_asset_url }}' defer></script>
+{%- assign formatted_balance = gift_card.balance | money_without_trailing_zeros | strip_html -%}
+
+<title>{{ 'gift_cards.issued.title' | t: value: formatted_balance, shop: shop.name }}</title>
+
+<div class='container text-center grid grid-cols-1 gap-md py-pagemargin'>
+  <div class='aspect-video relative max-w-sm mx-auto'>
+    <img
+      class='w-full h-full object-contain object-center'
+      src='{{ 'gift-card/card.svg' | shopify_asset_url }}'
+      alt=''
+      height='{{ 570 | divided_by: 1.5 }}'
+      width='570'
+      loading='eager'
+    >
+  </div>
+  <div class='text-center'>
+    <h1>
+      {% if settings.currency_code_enabled %}
+        {{ gift_card.balance | money_with_currency }}
+      {% else %}
+        {{ gift_card.balance | money }}
+      {% endif %}
+    </h1>
+    {%- if gift_card.enabled == false or gift_card.expired -%}
+      <p class='utility'>{{ 'gift_cards.issued.expired' | t }}</p>
+    {%- endif -%}
+  </div>
+  {% if gift_card.expires_on %}
+    {%- assign gift_card_expiration_date = gift_card.expires_on | date: '%B %e, %Y' -%}
+    <p class='caption'>
+      {{ 'gift_cards.issued.expiration_date' | t: expires_on: gift_card_expiration_date }}
+    </p>
+  {% endif %}
+
+  <div class='rte'>
+    <p>{{ 'gift_cards.issued.how_to_use_gift_card' | t }}</p>
+  </div>
+
+  <p id='gift-card-code' class='mx-auto font-mono'>{{ gift_card.code | format_code }}</p>
+
+  <div class='mx-auto' id='qr-code' data-identifier='{{ gift_card.qr_identifier }}'></div>
+
+  {%- if gift_card.pass_url -%}
+    <a href='{{ gift_card.pass_url }}' class='mx-auto'>
+      <img
+        src='{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}'
+        width='120'
+        height='40'
+        alt='{{ 'gift_cards.issued.add_to_apple_wallet' | t }}'
+        loading='lazy'
+      >
+    </a>
+  {%- endif -%}
+  <div class='text-center'>
+    <span class='caption gift-card__copy-success block mb-md' role='status'></span>
+    <template>
+      {%- render 'icon' with 'icon-success' -%}
+      {{ 'gift_cards.issued.copy_code_success' | t }}
+    </template>
+    <button variant='primary' id='copy-button' class='btn'>{{ 'gift_cards.issued.copy_code' | t }}</button>
+    <a
+      href='{{ shop.url }}'
+      class='btn'
+      variant='secondary'
+      target='_blank'
+      rel='noopener'
+      aria-describedby='a11y-new-window-message'
+    >
+      {{ 'gift_cards.issued.shop_link' | t }}
+    </a>
+  </div>
+</div>
+<script>
+  var string = { qrImageAlt: {{ 'gift_cards.issued.qr_image_alt' | t | json }} };
+  document.addEventListener('DOMContentLoaded', function() {
+   new QRCode( document.querySelector('#qr-code'), {
+    text: document.querySelector('#qr-code').dataset.identifier,
+    width: 72,
+    height: 72,
+    imageAltText: string.qrImageAlt
+    });
+  });
+  var template = document.getElementsByTagName("template")[0];
+  var clonedTemplate = template.content.cloneNode(true);
+  var isMessageDisplayed = false
+  document
+  .querySelector('#copy-button')
+  .addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('gift-card-code').innerText).then(function () {
+      if (!isMessageDisplayed) {
+        document.querySelector('.gift-card__copy-success').appendChild(clonedTemplate);
+        isMessageDisplayed = true
+      }
+    });
+  });
+</script>

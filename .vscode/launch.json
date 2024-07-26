@@ -1,0 +1,70 @@
+{
+  "configurations": [
+    {
+      "name": "Theme",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run theme:shopify:initial-push && npm run theme:shopify",
+      "presentation": {
+        "hidden": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "name": "Assets",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run theme:assets",
+      "autoAttachChildProcesses": true,
+      "presentation": {
+        "hidden": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "name": "Launch Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:9292",
+      "port": 9222,
+      "presentation": {
+        "hidden": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "name": "Attach",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "urlFilter": "http://127.0.0.1:9292/*",
+      "webRoot": "${workspaceFolder}",
+      "presentation": {
+        "hidden": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Start Development",
+      "stopAll": true,
+      "configurations": ["Theme", "Assets"],
+      "presentation": {
+        "order": 1
+      }
+    },
+    {
+      "name": "Open Chrome & Attach Debugger",
+      "stopAll": false,
+      "configurations": ["Launch Chrome", "Attach"],
+      "presentation": {
+        "order": 2
+      }
+    }
+  ]
+}

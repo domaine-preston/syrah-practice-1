@@ -1,0 +1,20 @@
+{
+  "type": "footer",
+  "name": "Footer Group",
+  "sections": {
+    "main": {
+      "type": "main-footer"
+    },
+    "localization": {
+      "type": "footer-localization"
+    },
+    "legal": {
+      "type": "footer-legal"
+    }
+  },
+  "order": [
+    "main",
+    "legal",
+    "localization"
+  ]
+}

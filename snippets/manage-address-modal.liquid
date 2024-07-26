@@ -1,0 +1,173 @@
+{%- liquid
+  assign addresses_first_name = 'customer.addresses.first_name' | t
+  assign addresses_last_name = 'customer.addresses.last_name' | t
+  assign addresses_company = 'customer.addresses.company' | t
+  assign addresses_address_1 = 'customer.addresses.address1' | t
+  assign addresses_address_2 = 'customer.addresses.address2' | t
+  assign addresses_city = 'customer.addresses.city' | t
+  assign addresses_country = 'customer.addresses.country' | t
+  assign addresses_province = 'customer.addresses.province' | t
+  assign addresses_zip = 'customer.addresses.zip' | t
+  assign addresses_phone = 'customer.addresses.phone' | t
+  assign addresses_set_default = 'customer.addresses.set_default' | t
+-%}
+
+<div class='grid grid-cols-1 grid-rows-[minmax(auto,_1fr)_auto] h-full bg-p-lightest '>
+  {%- form 'customer_address',
+    form_address,
+    class: 'grid grid-cols-1 px-sm py-xs gap-y-xs place-content-start',
+    id: form_id
+  -%}
+    <input name='return_to' value='{{ routes.account_addresses_url }}' hidden class='hidden'>
+    <div>
+      {%- assign id = form_id | append: '_AddressFirstNameNew' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'text',
+        id: id,
+        name: 'address[first_name]',
+        value: form.first_name,
+        autocomplete: 'given-name',
+        label: addresses_first_name
+      -%}
+    </div>
+    <div>
+      {%- assign id = form_id | append: '_AddressLastNameNew' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'text',
+        id: id,
+        name: 'address[last_name]',
+        value: form.last_name,
+        autocomplete: 'family-name',
+        label: addresses_last_name
+      -%}
+    </div>
+    <div>
+      {%- assign id = form_id | append: '_AddressCompanyNew' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'text',
+        id: id,
+        name: 'address[company]',
+        value: form.company,
+        autocomplete: 'organization',
+        label: addresses_company
+      -%}
+    </div>
+    <div>
+      {%- assign id = form_id | append: '_AddressAddress1New' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'text',
+        id: id,
+        name: 'address[address1]',
+        value: form.address1,
+        autocomplete: 'address-line1',
+        label: addresses_address_1
+      -%}
+    </div>
+    <div>
+      {%- assign id = form_id | append: '_AddressAddress2New' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'text',
+        id: id,
+        name: 'address[address2]',
+        value: form.address2,
+        autocomplete: 'address-line2',
+        label: addresses_address_2
+      -%}
+    </div>
+
+    <div>
+      {%- assign id = form_id | append: '_AddressCityNew' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'text',
+        id: id,
+        name: 'address[city]',
+        value: form.city,
+        autocomplete: 'address-level2',
+        label: addresses_city
+      -%}
+    </div>
+    {%- render '@needs-script', entries: 'component-country-selects' -%}
+    <country-selects
+      class='grid grid-cols-1 gap-y-xs'
+      country='{{ form_address.country }}'
+      province='{{ form_address.province }}'
+    >
+      {%- assign id = form_id | append: '_AddressCountryNew' -%}
+      {%- render 'form-field',
+        kind: 'select',
+        id: id,
+        value: form_address.country,
+        name: 'address[country]',
+        label: addresses_country,
+        autocomplete: 'country',
+        options: country_option_tags,
+        wrapper_attributes: 'data-country-select'
+      -%}
+
+      {%- assign id = form_id | append: '_AddressProvinceNew' -%}
+      {%- render 'form-field',
+        kind: 'select',
+        id: id,
+        value: form_address.province,
+        name: 'address[province]',
+        label: addresses_province,
+        wrapper_attributes: 'data-province-select'
+      -%}
+    </country-selects>
+
+    <div>
+      {%- assign id = form_id | append: '_AddressZipNew' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'text',
+        id: id,
+        name: 'address[zip]',
+        value: form.zip,
+        autocomplete: 'postal-code',
+        label: addresses_zip
+      -%}
+    </div>
+    <div>
+      {%- assign id = form_id | append: '_AddressPhoneNew' -%}
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'tel',
+        id: id,
+        name: 'address[phone]',
+        value: form.phone,
+        autocomplete: 'tel',
+        label: addresses_phone
+      -%}
+    </div>
+    <div>
+      {%- assign id = form_id | append: '_address_default_address_new' -%}
+      {%- render 'form-field',
+        kind: 'checkbox',
+        checked: true,
+        id: id,
+        name: 'address[default]',
+        label: addresses_set_default,
+        value: '1'
+      -%}
+    </div>
+  {%- endform -%}
+
+  <div class='sticky bottom-0 bg-p-lightest p-sm drop-shadow grid grid-cols-1 gap-y-xs z-10'>
+    <button class='btn !min-w-32' type='submit' form='{{ form_id }}' variant='primary'>
+      {%- if form_address.id != blank -%}
+        {{ 'customer.addresses.update' | t }}
+      {%- else -%}
+        {{ 'customer.addresses.add' | t }}
+      {%- endif -%}
+    </button>
+    <button class='btn !min-w-32' variant='secondary' form='{{ form_id }}' type='reset' close-modal>
+      {{ 'customer.addresses.cancel' | t }}
+    </button>
+  </div>
+</div>

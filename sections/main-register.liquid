@@ -1,0 +1,137 @@
+{%- liquid
+  assign register_title = 'customer.register.title' | t
+  assign register_first_name = 'customer.register.first_name' | t
+  assign register_last_name = 'customer.register.last_name' | t
+  assign register_email = 'customer.register.email' | t
+  assign register_password = 'customer.register.password' | t
+  assign register_submit = 'customer.register.submit' | t
+-%}
+
+{%- capture title -%}{{ register_title }}{%- endcapture -%}
+
+{%- capture content -%}
+  {%- form 'create_customer', novalidate: 'novalidate', class: 'grid grid-cols-1 gap-y-xs' -%}
+    {%- render 'form-errors', form: form -%}
+
+    <div>
+      {% liquid
+        assign value_first_name = ''
+        if form.first_name
+          assign value_first_name = form.first_name
+        endif
+      %}
+      {%- render 'form-field',
+        kind: 'input',
+        name: 'customer[first_name]',
+        id: 'RegisterForm-FirstName',
+        label: register_first_name,
+        value: value_first_name,
+        autocomplete: 'given-name'
+      -%}
+    </div>
+    <div>
+      {% liquid
+        assign value_last_name = ''
+        if form.last_name
+          assign value_last_name = form.last_name
+        endif
+      %}
+      {%- render 'form-field',
+        kind: 'input',
+        name: 'customer[last_name]',
+        id: 'RegisterForm-LastName',
+        label: register_last_name,
+        value: value_last_name,
+        autocomplete: 'family-name'
+      -%}
+    </div>
+    <div>
+      {% liquid
+        assign has_error = blank
+        assign error_text = blank
+        if form.errors contains 'email'
+          assign has_error = true
+        endif
+        assign value_email = ''
+        if form.email
+          assign value_email = form.email
+        endif
+      %}
+      {%- if form.errors contains 'email' -%}
+        {%- capture error_text -%}
+          {{ form.errors.translated_fields.email | capitalize }}
+          {{ form.errors.messages.email }}
+        {%- endcapture -%}
+      {%- endif -%}
+
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'email',
+        name: 'customer[email]',
+        id: 'RegisterForm-email',
+        value: value_email,
+        label: register_email,
+        autocomplete: 'email',
+        error: has_error,
+        error_text: error_text
+      -%}
+    </div>
+    <div>
+      {% liquid
+        assign has_error = blank
+        assign error_text = blank
+        if form.errors contains 'password'
+          assign has_error = true
+        endif
+      %}
+      {%- if form.errors contains 'password' -%}
+        {%- capture error_text -%}
+          {{ form.errors.translated_fields.password | capitalize }}
+          {{ form.errors.messages.password }}
+        {%- endcapture -%}
+      {%- endif -%}
+
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'password',
+        name: 'customer[password]',
+        id: 'RegisterForm-password',
+        label: register_password,
+        error: has_error,
+        error_text: error_text
+      -%}
+    </div>
+
+    <div class="text-center mt-xs">
+      <button class='btn' variant='primary'>
+        {{ register_submit }}
+      </button>
+    </div>
+
+    <div class="text-center">
+      <a href='{{ routes.account_login_url }}' class='btn' variant='tertiary'>
+        {{ 'customer.login_page.sign_in' | t }}
+      </a>
+    </div>
+  {%- endform -%}
+
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when '@app' -%}
+        {% render block %}
+    {%- endcase -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- render 'customer-form-content', content: content, title: title -%}
+
+{% schema %}
+{
+  "name": "t:sections.main-register.name",
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

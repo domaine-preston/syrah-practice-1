@@ -1,0 +1,35 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "outputs": ["assets/**"],
+      "dependsOn": ["validate:design-manifest"]
+    },
+    "validate:design-manifest": {
+      "cache": false,
+      "interactive": false,
+      "persistent": false
+    },
+    "theme:shopify:initial-push": {
+      "cache": false,
+      "interactive": false,
+      "persistent": false
+    },
+    "theme:shopify": {
+      "cache": false,
+      "interactive": true,
+      "dependsOn": ["theme:shopify:initial-push"]
+    },
+    "theme:assets": {
+      "cache": false,
+      "interactive": true
+    },
+    "dev": {
+      "outputLogs": "full",
+      "cache": false,
+      "persistent": true,
+      "outputs": ["assets/**"]
+    }
+  }
+}

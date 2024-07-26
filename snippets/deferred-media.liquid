@@ -1,0 +1,114 @@
+{% comment %}
+  Renders a deferred media element that loads a video when the user interacts with the poster image.
+
+  Accepts the following parameters:
+  - title: The title for the video.
+  - cover_image: The poster image for the video, if not preview_image from media is used.
+  - video: The video object for the video or settings from a Section Input of type 'video_url'.
+  - loop: Whether the video should loop.
+  - autoplay: Whether the video should autoplay.
+{% endcomment %}
+
+{%- liquid
+  assign video_title = title
+  assign video_id = video.id
+  assign video_alt = 'sections.video.load_video' | t: description: video_title | escape
+  assign poster = cover_image | default: video.preview_image
+  assign autoplay = autoplay | default: true, allow_false: true
+  assign loop = loop | default: false, allow_false: true
+  assign muted = muted | default: false, allow_false: true
+  assign controls = controls | default: true, allow_false: true
+  assign object_fit = object_fit | default: 'object-contain'
+  assign class = class | default: 'relative w-full aspect-[16/9]'
+  assign poster_loading = poster_loading | default: 'lazy'
+
+  if video.media_type == 'external_video'
+    assign video_id = video.external_id
+  endif
+
+  assign autoplay_state = '0'
+
+  if autoplay
+    assign autoplay_state = '1'
+  endif
+  assign media_type = video.media_type | default: 'external_video'
+  assign host = video.host | default: video.type
+-%}
+
+{%- if video_id != blank -%}
+  {%- render '@needs-script', entries: 'core-deferred-media' -%}
+  <deferred-media
+    class='{{ class }}'
+    data-media-id='{{ video_id }}'
+    media-type='{{ media_type }}'
+    host='{{ host }}'
+    loop='{{ loop }}'
+    autoplay='{{ autoplay }}'
+    controls='{{ controls }}'
+    muted='{{ muted }}'
+  >
+    <button
+      id='Deferred-Poster-Modal-{{ video_id }}'
+      type='button'
+      aria-label='{{ alt }}'
+      class='absolute inset-0 w-full h-full flex items-center justify-center'
+    >
+      {%- if poster != null -%}
+        {%- render 'image',
+          width: 1440,
+          image: poster,
+          sizes: '100vw',
+          widths: '375, 750, 1100, 1500, 1780, 2000, 3000, 3840',
+          alt: video_alt,
+          class: 'absolute inset-0 w-full h-full',
+          loading: poster_loading
+        -%}
+      {%- else -%}
+        {{ 'hero-apparel-3' | placeholder_svg_tag: 'absolute inset-0 w-full h-full' }}
+      {%- endif -%}
+      <span class='size-10 text-t-foreground rounded-full bg-t-background inline-flex items-center justify-center z-10 drop-shadow'>
+        {%- render 'icon' with 'icon-play', size: 16 -%}
+      </span>
+    </button>
+    <template>
+      {%- if media_type == 'external_video' -%}
+        {%- liquid
+          assign loop_string = ''
+          if loop
+            assign loop_string = '&loop=1&playlist=' | append: video_id
+          endif
+        -%}
+        {%- if host == 'youtube' -%}
+          <iframe
+            src='https://www.youtube.com/embed/{{ video_id }}?enablejsapi=1&controls={{ controls }}&rel=0&autoplay={{- autoplay_state -}}{{ loop_string }}'
+            class='js-youtube absolute w-full h-full inset-0'
+            allow='autoplay; encrypted-media'
+            allowfullscreen
+            title='{{ video_title | escape }}'
+          ></iframe>
+        {%- elsif host == 'vimeo' -%}
+          <iframe
+            src='https://player.vimeo.com/video/{{ video_id }}?autoplay={{- autoplay_state -}}{{ loop }}'
+            class='js-vimeo absolute w-full h-full inset-0'
+            allow='autoplay; encrypted-media'
+            allowfullscreen
+            title='{{ video_title | escape }}'
+          ></iframe>
+        {%- endif -%}
+      {%- else -%}
+        {%- assign video_class = 'absolute w-full h-full inset-0' | append: object_fit -%}
+        {{
+          video
+          | video_tag:
+            image_size: '1100x',
+            autoplay: autoplay,
+            loop: loop,
+            controls: controls,
+            muted: muted,
+            playsinline: true,
+            class: video_class
+        }}
+      {%- endif -%}
+    </template>
+  </deferred-media>
+{%- endif -%}

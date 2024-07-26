@@ -1,0 +1,13 @@
+@import './index.css';
+
+@config '../../tailwind.styleguide.config.ts';
+
+@layer components {
+  .spacing-token {
+    @apply flex-shrink-0 flex-grow-0 border-2 border-dashed border-t-border bg-t-background-secondary;
+  }
+
+  .color-token {
+    @apply basis-4/12 p-sm;
+  }
+}

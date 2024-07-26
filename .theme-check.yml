@@ -1,0 +1,39 @@
+MatchingTranslations:
+  enabled: true
+  severity: error
+
+MatchingSchemaTranslations:
+  enabled: true
+  severity: error
+
+NestedSnippet:
+  enabled: false
+
+DeprecatedTag:
+  enabled: true
+  severity: error
+
+JSONSyntaxError:
+  enabled: true
+  severity: error
+
+PaginationSize:
+  enabled: true
+  min_size: 1
+  max_size: 50
+  severity: error
+
+ValidSchema:
+  enabled: true
+  severity: error
+
+MissingTemplate:
+  enabled: true
+  severity: warning
+
+MissingAsset:
+  enabled: true
+  severity: warning
+
+ignore:
+  - src/**

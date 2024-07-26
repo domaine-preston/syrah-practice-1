@@ -1,0 +1,22 @@
+{%- if section.settings.liquid != blank -%}
+  {{- section.settings.liquid -}}
+{%- endif -%}
+
+{%- schema -%}
+{
+  "name": "t:sections.liquid.presets.name",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "liquid",
+      "label": "t:sections.liquid.presets.name"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.liquid.presets.name",
+      "category": "t:sections.liquid.presets.name"
+    }
+  ]
+}
+{%- endschema -%}

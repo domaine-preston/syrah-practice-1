@@ -1,0 +1,41 @@
+{%- form 'customer' -%}
+  <input type='hidden' name='contact[tags]' value='newsletter'>
+  <div class='newsletter-form__wrapper relative'>
+    <hh-input-wrapper class='newsletter-form__input-wrapper' theme='minimal' animation='disappear' height='compact'>
+      {% comment %} <span slot='icon' class='newsletter-form__icon'>{% render 'icon' with 'envelope' %}</span> {% endcomment %}
+      {% comment %} {%- assign label = 'newsletter.label' | t -%} {% endcomment %}
+      {% comment %}
+        {%- render 'input',
+          id: 'newsletter-form-input',
+          label: label,
+          type: 'email',
+          name: 'contact[email]',
+          value: form.email,
+          required: true,
+          errors: form.errors,
+          success: form.posted_successfully?
+        -%}
+      {% endcomment %}
+    </hh-input-wrapper>
+
+    <button type='submit' class='newsletter-form__button relative c-day'>
+      {% comment %} {% render 'icon' with 'caret' %} {% endcomment %}
+      <span class='sr-only'>{{ 'newsletter.button_label' | t }}</span>
+    </button>
+  </div>
+
+  {%- if form.errors -%}
+    <small class='p newsletter-form__error' id='newsletter-form-error'>
+      {% comment %} {% render 'icon' with 'error' %} {% endcomment %}
+      {{ form.errors.translated_fields.email | capitalize }}
+      {{ form.errors.messages.email }}
+    </small>
+  {%- endif -%}
+
+  {%- if form.posted_successfully? -%}
+    <small class='p newsletter-form__success' id='newsletter-form-success' tabindex='-1' autofocus>
+      {% comment %} {% render 'icon' with 'success' %} {% endcomment %}
+      {{ 'newsletter.success' | t }}
+    </small>
+  {%- endif -%}
+{%- endform -%}

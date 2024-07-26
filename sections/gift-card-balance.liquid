@@ -1,0 +1,39 @@
+{%- render '@needs-script', entries: 'core-gift-card-balance' -%}
+
+{%- assign id = 'GiftCardBalanceForm' | append: section.id -%}
+<gift-card-balance class='container max-w-md mx-auto grid grid-cols-1 gap-sm py-pagemargin'>
+  <form action='' class='grid grid-cols-1 gap-xs'>
+    {%- if section.settings.title != blank -%}
+      <h2 class='text-center h5 mb-xs'>{{ section.settings.title }}</h2>
+    {%- endif -%}
+    {%- render 'form-field',
+      kind: 'input',
+      name: 'code',
+      id: id,
+      required: true,
+      help_text: 'Please enter your gift card code',
+      label: 'Gift Card Code'
+    -%}
+    <button class='btn' variant='primary'>Check Balance</button>
+  </form>
+</gift-card-balance>
+<code> Test with: rwfy77chdwbbc833 </code>
+
+{% schema %}
+{
+  "name": "t:sections.gift-card-balance.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.gift-card-balance.title.label",
+      "default": "Check Your Gift Card Balance"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.gift-card-balance.name"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,219 @@
+{% comment %}
+  Renders a product main form with product title, price, inventory, description, sku, and quantity selector.
+
+  Accepts:
+  - product: {Object} Product liquid object
+  - section: {Object} Section liquid object
+  - is_quick_shop: {Boolean} Whether the form is being rendered in a quick shop modal
+
+  Usage:
+  {% render 'product--main', product: product, section: section %}
+{% endcomment %}
+
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+{%- assign selected_variant = product.selected_or_first_available_variant | default: product.variants[0] -%}
+<section
+  id='ProductInfo-{{ section.id }}'
+  class='grid grid-cols-1 gap-y-sm place-content-start {% if is_quick_shop %}px-sm{% endif %}'
+>
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when '@app' -%}
+        {%- capture block_content -%}
+          {%- render block -%}
+        {%- endcapture -%}
+
+        {%- if block_content contains 'shopify_subscriptions' -%}
+          <div sub-section-id='{{ block.id }}' {{ block.shopify_attributes }}>
+            {{- block_content -}}
+          </div>
+        {%- else -%}
+          {{- block_content -}}
+        {%- endif -%}
+      {%- when 'text' -%}
+        {%- if block.settings.text != blank -%}
+          <p
+            class='rte'
+            {{ block.shopify_attributes }}
+          >
+            {{- block.settings.text -}}
+          </p>
+        {%- endif -%}
+      {%- when 'title' -%}
+        <div {{ block.shopify_attributes }}>
+          <h1 class='h3'>{{ product.title | escape }}</h1>
+        </div>
+      {%- when 'price' -%}
+        <div sub-section-id='{{ block.id }}'>
+          {%- capture price_line -%}
+            {%- render 'price',
+              product: product,
+              use_variant: selected_variant,
+              show_badges: true,
+              price_size_class: 'h6'
+            -%}
+          {%- endcapture -%}
+
+          {%- if block.settings.show_automatic_price -%}
+            {%- render '@needs-script', entries: 'core-automatic-price' -%}
+            <automatic-price
+              cloak
+              hide-while-loading
+              class='h6'
+              variant-id='{{ selected_variant.id }}'
+              current-price='{{ selected_variant.price }}'
+              id='price-{{ section.id }}'
+              role='status'
+              {{ block.shopify_attributes }}
+            >
+              {{ price_line }}
+            </automatic-price>
+          {%- else -%}
+            <div
+              class='h6'
+              id='price-{{ section.id }}'
+              role='status'
+              {{ block.shopify_attributes }}
+            >
+              {{ price_line }}
+            </div>
+          {%- endif -%}
+
+          {%- if product.quantity_price_breaks_configured? -%}
+            <div class='caption' id='Volume-Note-{{ section.id }}'>
+              <span>{{ 'products.product.volume_pricing.note' | t }}</span>
+            </div>
+          {%- endif -%}
+          {%- if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank -%}
+            <div class='caption'>
+              {%- if cart.duties_included and cart.taxes_included -%}
+                {{ 'products.product.duties_and_taxes_included' | t }}
+              {%- elsif cart.taxes_included -%}
+                {{ 'products.product.taxes_included' | t }}
+              {%- elsif cart.duties_included -%}
+                {{ 'products.product.duties_included' | t }}
+              {%- endif -%}
+              {%- if shop.shipping_policy.body != blank -%}
+                {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+          <div {{ block.shopify_attributes }}>
+            {%- assign product_form_installment_id = 'product-form-installment-' | append: product_form_id -%}
+            {%- form 'product', product, id: product_form_installment_id, class: 'caption' -%}
+              <input type='hidden' name='id' value='{{ selected_variant.id }}'>
+              {{ form | payment_terms }}
+            {%- endform -%}
+          </div>
+        </div>
+      {%- when 'inventory' -%}
+        <p
+          sub-section-id='{{ block.id }}'
+          class='inline-flex items-center justify-start gap-x-2xs caption {% if selected_variant.inventory_management != 'shopify' %} sr-only{% endif %}'
+          {{ block.shopify_attributes }}
+          id='Inventory-{{ section.id }}'
+          role='status'
+        >
+          {%- if selected_variant.inventory_management == 'shopify' -%}
+            {%- if selected_variant.inventory_quantity > 0 -%}
+              {%- if selected_variant.inventory_quantity <= block.settings.inventory_threshold -%}
+                {%- if block.settings.show_inventory_quantity -%}
+                  {{-
+                    'products.product.inventory_low_stock_show_count'
+                    | t: quantity: selected_variant.inventory_quantity
+                  -}}
+                {%- else -%}
+                  {{- 'products.product.inventory_low_stock' | t -}}
+                {%- endif -%}
+              {%- else -%}
+                {%- if block.settings.show_inventory_quantity -%}
+                  {{-
+                    'products.product.inventory_in_stock_show_count'
+                    | t: quantity: selected_variant.inventory_quantity
+                  -}}
+                {%- else -%}
+                  {{- 'products.product.inventory_in_stock' | t -}}
+                {%- endif -%}
+              {%- endif -%}
+            {%- else -%}
+              {%- if selected_variant.inventory_policy == 'continue' -%}
+                {{- 'products.product.inventory_out_of_stock_continue_selling' | t -}}
+              {%- else -%}
+                {{- 'products.product.inventory_out_of_stock' | t -}}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endif -%}
+        </p>
+      {%- when 'description' -%}
+        {%- if product.description != blank -%}
+          <div class='inline-richtext' {{ block.shopify_attributes }}>
+            {{ product.description }}
+          </div>
+        {%- endif -%}
+      {%- when 'sku' -%}
+        {%- if selected_variant.sku != blank -%}
+          <p
+            sub-section-id='{{ block.id }}'
+            class='caption uppercase {% if selected_variant.sku.size == 0 %} sr-only{% endif %}'
+            id='Sku-{{ section.id }}'
+            role='status'
+            {{ block.shopify_attributes }}
+          >
+            <span class='sr-only'>{{ 'products.product.sku' | t }}:</span>
+            {{- selected_variant.sku -}}
+          </p>
+        {%- endif -%}
+      {%- when 'custom_liquid' -%}
+        {{ block.settings.custom_liquid }}
+      {%- when 'collapsible_tab' -%}
+        <div class='accordion' {{ block.shopify_attributes }}>
+          {%- capture accordion_id -%}{{ block.id }}-{{ section.id }}{%- endcapture -%}
+          {%- assign accordion_title = block.settings.heading | default: block.settings.page.title | escape -%}
+          {%- capture accordion_content -%}
+            {{ block.settings.content }}
+            {{ block.settings.page.content }}
+          {%- endcapture -%}
+          {% render 'accordion-item', id: accordion_id, title: accordion_title, content: accordion_content %}
+        </div>
+      {%- when 'quantity_selector' -%}
+        {%- render 'product--main__quantity-selector',
+          block: block,
+          section: section,
+          product: product,
+          selected_variant: selected_variant,
+          product_form_id: product_form_id
+        -%}
+      {%- when 'popup' -%}
+        <modal-opener
+          class='product-popup-modal__opener quick-add-hidden'
+          data-modal='#PopupModal-{{ block.id }}'
+          {{ block.shopify_attributes }}
+        >
+          <button
+            id='ProductPopup-{{ block.id }}'
+            class='product-popup-modal__button link'
+            type='button'
+            aria-haspopup='dialog'
+          >
+            {{ block.settings.text | default: block.settings.page.title | escape }}
+          </button>
+        </modal-opener>
+
+      {%- when 'variant_picker' -%}
+        {% render 'product--main__variant-picker',
+          product: product,
+          product_form_id: product_form_id,
+          unique_id: block.id,
+          block: block
+        %}
+      {%- when 'buy_buttons' -%}
+        {%- render 'product--main__buy-buttons',
+          block: block,
+          product: product,
+          product_form_id: product_form_id,
+          section_id: section.id,
+          show_pickup_availability: true
+        -%}
+    {%- endcase -%}
+  {%- endfor -%}
+</section>

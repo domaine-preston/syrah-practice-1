@@ -1,0 +1,280 @@
+{% comment %}
+  Renders a main cart page line item.
+
+  Accepts:
+    - item: The cart item object.
+{% endcomment %}
+
+<div
+  id='MainCart-Item-{{ item.index | plus: 1 }}'
+  class='col-span-4 grid grid-cols-subgrid gap-x-sm items-start border-b border-solid border-t-border py-sm'
+>
+  {% comment %} Media {% endcomment %}
+  <div class='relative aspect-[9/11]'>
+    {% if item.image %}
+      {%- render 'image',
+        width: 600,
+        image: item.image,
+        height: item.image.height,
+        alt: item.image.alt,
+        sizes: '(min-width: 1440px) 300px, (min-width: 1024px) 200px, 150px',
+        widths: '150, 200, 300, 400, 600',
+        object_fit: 'contain',
+        class: 'h-full w-full h-full absolute inset-0'
+      -%}
+      {% comment %} Leave empty space due to a:empty CSS display: none rule {% endcomment %}
+      <a href='{{ item.url }}' class='absolute inset-0' tabindex='-1' aria-hidden='true'>
+        <span class='sr-only'>
+          {{- item.product.title | escape -}}
+        </span>
+      </a>
+    {% endif %}
+  </div>
+
+  {% comment %} Item Details {% endcomment %}
+  <div class='grid gap-xs place-content-start'>
+    <a href='{{ item.url }}' class='body uppercase'>
+      {{- item.product.title | escape -}}
+    </a>
+
+    {%- if item.original_price != item.final_price -%}
+      <div class='text-utility text-p-dark'>
+        <span class='sr-only'>
+          {{ 'products.product.price.regular_price' | t }}
+        </span>
+        <s class='text-utility line-through'>
+          {{- item.original_price | money -}}
+        </s>
+        <span class='sr-only'>
+          {{ 'products.product.price.sale_price' | t }}
+        </span>
+        <strong class='text-utility'>
+          {{ item.final_price | money }}
+        </strong>
+      </div>
+    {%- else -%}
+      <div class='text-p-dark text-utility'>
+        {{ item.original_price | money }}
+      </div>
+    {%- endif -%}
+
+    {%- if item.product.has_only_default_variant == false
+      or item.properties.size != 0
+      or item.selling_plan_allocation != blank
+    -%}
+      {%- capture line_properties_content -%}
+        {%- if item.product.has_only_default_variant == false -%}
+          {%- for option in item.options_with_values -%}
+            <div class='grid grid-cols-1 gap-2xs text-caption'>
+              <dt class="truncate font-medium">{{ option.name }}:</dt>
+              <dd class="text-t-foreground-secondary">
+                {{ option.value -}}
+                {%- unless forloop.last %}, {% endunless %}
+              </dd>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- for property in item.properties -%}
+          {%- assign property_first_char = property.first | slice: 0 -%}
+          {%- if property.last != blank and property_first_char != '_' -%}
+            <div class='grid grid-cols-1 gap-2xs text-caption'>
+              <dt class="truncate font-medium">{{ property.first }}:</dt>
+              <dd class="text-t-foreground-secondary">
+                {%- if property.last contains '/uploads/' -%}
+                  <a
+                    href='{{ property.last }}'
+                    class='link'
+                    target='_blank'
+                    aria-describedby='a11y-new-window-message'
+                  >
+                    {{ property.last | split: '/' | last }}
+                  </a>
+                {%- else -%}
+                  {{ property.last }}
+                {%- endif -%}
+              </dd>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      {%- if line_properties_content != blank -%}
+        <div>
+          <dl class='text-utility grid grid-cols-1 gap-y-xs max-w-96'>
+            {{- line_properties_content -}}
+          </dl>
+        </div>
+      {%- endif -%}
+
+      {%- if item.selling_plan_allocation.selling_plan != blank -%}
+        <p class='text-utility'>{{ item.selling_plan_allocation.selling_plan.name }}</p>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if item.line_level_discount_allocations.size > 0 -%}
+      <ul
+        class='grid grid-cols-1 gap-2xs'
+        role='list'
+        aria-label='{{ 'customer.order.discount' | t }}'
+      >
+        {%- for discount in item.line_level_discount_allocations -%}
+          <li class='flex items-center justify-start gap-2xs text-utility'>
+            {% render 'icon' with 'icon-discount' %}
+            {{ discount.discount_application.title }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  {% comment %} Quantity Column {% endcomment %}
+  <div class='grid grid-cols-1 gap-2xs'>
+    <div class='flex items-center gap-xs'>
+      {%- capture quantity_id -%}Main-cart-quantity-{{ item.index | default: 0 | plus: 1 }}{%- endcapture -%}
+      {%- render 'quantity-input',
+        quantity: item.quantity,
+        variant: item.variant,
+        product: item.product,
+        cart_item: item,
+        id: quantity_id,
+        name: 'updates[]'
+      -%}
+
+      <cart-remove-toggle
+        id='MainCart-Remove-{{ item.index | plus: 1 }}'
+        data-index='{{ item.index | plus: 1 }}'
+        key='{{ item.key }}'
+      >
+        <button
+          type='button'
+          class='inline-flex place-items-center p-xs text-t-foreground text-heading-6 hover:opacity-80'
+          aria-label='{{ 'sections.cart.remove_title' | t: title: item.title }}'
+          data-variant-id='{{ item.variant.id }}'
+        >
+          {%- render 'icon' with 'icon-remove' -%}
+        </button>
+      </cart-remove-toggle>
+    </div>
+    {% comment %} TODO: Volumetric Pricing {% endcomment %}
+    {% comment %}
+      {%- if has_qty_rules or has_vol_pricing -%}
+        <button
+          type='button'
+          class='quantity-popover__info-button quantity-popover__info-button--icon-with-label button button--tertiary'
+          aria-expanded='false'
+        >
+          {% render 'icon-info' %}
+          <span>
+            {%- if has_vol_pricing -%}
+              {{ 'products.product.volume_pricing.note' | t }}
+            {%- elsif has_qty_rules -%}
+              {{ 'products.product.quantity.note' | t }}
+            {%- endif -%}
+          </span>
+        </button>
+      {%- endif -%}
+    {% endcomment %}
+    {% comment %}
+      {%- if has_vol_pricing or has_qty_rules -%}
+        <div
+          class='cart-items__info global-settings-popup quantity-popover__info'
+          tabindex='-1'
+          hidden
+        >
+          {%- if has_qty_rules == false -%}
+            <span class='volume-pricing-label caption'>
+              {{- 'products.product.volume_pricing.title' | t -}}
+            </span>
+          {%- endif -%}
+          <div class='quantity__rules caption'>
+            {%- if item.variant.quantity_rule.increment > 1 -%}
+              <span class='divider'>
+                {{- 'products.product.quantity.multiples_of' | t: quantity: item.variant.quantity_rule.increment -}}
+              </span>
+            {%- endif -%}
+            {%- if item.variant.quantity_rule.min > 1 -%}
+              <span class='divider'>
+                {{- 'products.product.quantity.min_of' | t: quantity: item.variant.quantity_rule.min -}}
+              </span>
+            {%- endif -%}
+            {%- if item.variant.quantity_rule.max != null -%}
+              <span class='divider'>
+                {{- 'products.product.quantity.max_of' | t: quantity: item.variant.quantity_rule.max -}}
+              </span>
+            {%- endif -%}
+          </div>
+
+          <button
+            class='inline-flex place-items-center p-xs text-t-foreground text-heading-5'
+            type='button'
+            aria-label='{{ 'accessibility.close' | t }}'
+          >
+            {%- render 'icon' with 'icon-close' -%}
+          </button>
+
+          {%- if item.variant.quantity_price_breaks.size > 0 -%}
+            <volume-pricing class='parent-display'>
+              <ul class='list-unstyled'>
+                <li>
+                  <span>{{ item.variant.quantity_rule.min }}+</span>
+                  <span>{{ item.variant.price | money_with_currency }}/ea</span>
+                </li>
+                {%- for price_break in item.variant.quantity_price_breaks -%}
+                  <li>
+                    <span>
+                      {{- price_break.minimum_quantity -}}
+                      <span aria-hidden='true'>+</span></span
+                    >
+                    <span>{{ price_break.price | money_with_currency }}/ea</span>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </volume-pricing>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {% endcomment %}
+    {% comment %}
+    {% endcomment %}
+  </div>
+
+  {% comment %} Price Column {% endcomment %}
+  <div class='text-right'>
+    {%- if item.original_line_price != item.final_line_price -%}
+      <dl class='inline-flex items-center justify-end gap-x-2xs flex-wrap'>
+        <dt class='sr-only'>
+          {{ 'products.product.price.regular_price' | t }}
+        </dt>
+        <dd>
+          <s class='utility line-through text-p-dark'>
+            {{ item.original_line_price | money }}
+          </s>
+        </dd>
+        <dt class='sr-only'>
+          {{ 'products.product.price.sale_price' | t }}
+        </dt>
+        <dd class='utility'>
+          {{ item.final_line_price | money }}
+        </dd>
+      </dl>
+    {%- else -%}
+      <span class='utility'>
+        {{ item.original_line_price | money }}
+      </span>
+    {%- endif -%}
+
+    {%- if item.variant.available and item.unit_price_measurement -%}
+      <div class='caption'>
+        <span class='sr-only'>{{ 'products.product.price.unit_price' | t }}</span>
+        {{ item.unit_price | money }}
+        <span aria-hidden='true'>/</span>
+        <span class='sr-only'>&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+        {%- if item.unit_price_measurement.reference_value != 1 -%}
+          {{- item.unit_price_measurement.reference_value -}}
+        {%- endif -%}
+        {{ item.unit_price_measurement.reference_unit }}
+      </div>
+    {%- endif -%}
+  </div>
+</div>

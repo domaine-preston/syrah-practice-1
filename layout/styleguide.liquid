@@ -1,0 +1,72 @@
+<!doctype html>
+<html class='no-js' lang='{{ request.locale.iso_code }}'>
+  <head>
+    {%- render 'speculation-rules' -%}
+    <meta charset='utf-8' data-svg-sprite-path='{{ 'icons.svg' | asset_url }}'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width,initial-scale=1'>
+    <meta name='theme-color' content=''>
+    <link rel='canonical' href='{{ canonical_url }}'>
+
+    <style>
+      [cloak] {
+        display: none !important;
+      }
+    </style>
+
+    {%- render 'preconnect' -%}
+    {%- render '@head-fonts' -%}
+
+    {%- if settings.favicon != blank -%}
+      <link
+        rel='icon'
+        type='image/png'
+        href='{{ settings.favicon | image_url: width: 32, height: 32 }}'
+      >
+    {%- endif -%}
+
+    <title>{{ page_title }}</title>
+
+    {% if page_description %}
+      <meta name='description' content='{{ page_description | escape }}'>
+    {% endif %}
+
+    {%- liquid
+      render 'meta-tags'
+      render 'seo-schema'
+    -%}
+
+    {{ content_for_header }}
+
+    {%- if request.design_mode -%}
+      <link
+        href='{{ '-styleguide.css' | asset_url }}'
+        rel='stylesheet'
+        type='text/css'
+        media='all'
+        crossorigin='anonymous'
+      >
+    {%- else -%}
+      {{ '-styleguide.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+
+    {%- render '@head-scripts' -%}
+  </head>
+
+  <body class='template-{{- template -}}'>
+    {%- capture body_content -%}
+      <main
+        id='main'
+        class='content-for-layout focus-none grid grid-cols-1 gap-sm'
+        role='main'
+        tabindex='-1'
+      >
+        <app-provider>
+          {{ content_for_layout }}
+        </app-provider>
+      </main>
+    {%- endcapture -%}
+    {{- body_content -}}
+    {%- render '@body-scripts', content: body_content -%}
+  </body>
+</html>

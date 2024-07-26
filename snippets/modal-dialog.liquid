@@ -1,0 +1,80 @@
+{% comment %}
+  Renders a modal dialog with the given content.
+
+  Accepts the following parameters:
+  - id: The id of the modal dialog.
+  - content: The content of the modal dialog.
+  - anchor: The anchor of the modal dialog. Possible values are 'left' and 'right'.
+  - type: The type of the modal dialog. Possible values are 'drawer' and 'modal'.
+  - close_on_backdrop_click: A boolean value that determines whether the modal dialog should be closed when the backdrop is clicked. (optional)
+  - header_classes: The classes to be added to the modal dialog header. (optional)
+  - close_icon_size: The size of the close icon. (optional)
+  - without_title: A boolean value that determines whether the modal dialog should have a title. (optional)
+  - title: The title of the modal dialog. (optional)
+  - size: The size of the modal dialog. Possible values are 'modal-max'.(optional)
+
+  Content Slots:
+  - header: The header of the modal dialog.
+  - close-icon: The close icon of the modal dialog.
+  - default: The content of the modal dialog.
+{% endcomment %}
+
+{%- liquid
+  assign id = id
+  assign title = title
+  assign anchor = anchor | default: 'left'
+  assign type = type | default: 'drawer'
+  assign size = size
+  assign close_on_backdrop_click = close_on_backdrop_click | default: true, allow_false: true
+  assign header_classes = header_classes
+  assign close_icon_size = close_icon_size
+  assign without_title = without_title | default: false, allow_false: true
+  assign content = content
+  assign with_footer = with_footer | default: false, allow_false: true
+  assign url = url | default: blank
+-%}
+{%- if id != blank -%}
+  <modal-dialog
+    cloak
+    type='{{ type }}'
+    id='{{ id }}'
+
+    {% if url %}
+      url='{{ url }}'
+    {% endif %}
+
+    {% if size != blank %}
+      size='{{ size }}'
+    {% endif %}
+
+    {% if type == 'drawer' %}
+      anchor='{{ anchor }}'
+    {% endif %}
+
+    {% if close_on_backdrop_click %}
+      close-on-backdrop-click='true'
+    {% endif %}
+
+    {% if without_title != blank %}
+      without-title='true'
+    {% endif %}
+
+    {% if header_classes != blank %}
+      header-classes='{{ header_classes }}'
+    {% endif %}
+
+    {% if close_icon_size != blank %}
+      close-icon-size='{{ close_icon_size }}'
+    {% endif %}
+
+    {% if with_footer %}
+      with-footer='true'
+    {% endif %}
+  >
+    {%- if title != blank -%}
+      <h5 slot='header' class='h5'>{{ title }}</h5>
+    {%- endif -%}
+
+    {{ content }}
+  </modal-dialog>
+{%- endif -%}

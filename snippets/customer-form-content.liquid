@@ -1,0 +1,18 @@
+<div class='grid grid-cols-1 gap-sm mx-auto p-pagemargin max-w-xl'>
+  {%- if title != blank or subtext != blank -%}
+    <div class='text-center grid grid-cols-1 gap-xs'>
+      {%- if title != blank -%}
+        <h1 class='h3'>
+          {{ title }}
+        </h1>
+      {%- endif -%}
+
+      {%- if subtext != blank -%}
+        <p>
+          {{ subtext }}
+        </p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  {{ content }}
+</div>

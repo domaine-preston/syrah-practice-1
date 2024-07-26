@@ -1,0 +1,12 @@
+{%- capture badge_classes -%}
+bg-white py-1 px-2.5 rounded-3xl border border-primary flex justify-center items-center lg:px-3 caption uppercase
+{%- endcapture -%}
+{%- if product.available == false -%}
+  <span class='{{ badge_class }} {{ badge_classes }} bg-t-brand-secondary text-p-darkest'>
+    {{- 'products.product.sold_out' | t -}}
+  </span>
+{%- elsif product.compare_at_price > product.price and product.available -%}
+  <span class='{{ badge_class }} {{ badge_classes }} bg-t-brand-primary text-p-lightest'>
+    {{- 'products.product.on_sale' | t -}}
+  </span>
+{%- endif -%}

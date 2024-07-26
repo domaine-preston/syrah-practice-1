@@ -1,0 +1,150 @@
+{% comment %}
+  Renders gift card recipient form.
+  Accepts:
+  - product: {Object} product object.
+  - form: {Object} the product form object.
+  - section: {Object} section to which this snippet belongs.
+  - form_id: {String} the form id.
+
+  Usage:
+  {% render 'gift-card-recipient-form', product: product, form: form, section: section %}
+{% endcomment %}
+
+<div class='mb-sm'>
+  {%- assign gift_card_recipient_control_flag = 'properties[__shopify_send_gift_card_to_recipient]' -%}
+  <script src='{{ '-core-recipient-form.js' | asset_url }}' defer='defer' type='module'></script>
+  <recipient-form
+    class='group'
+    data-section-id='{{ section.id }}'
+    data-product-variant-id='{{ product.selected_or_first_available_variant.id }}'
+  >
+    {%- liquid
+      assign reciepient_checkbox_id = 'Recipient-checkbox-' | append: section.id
+      render 'form-field', kind: 'switch', id: reciepient_checkbox_id, checked: true, name: gift_card_recipient_control_flag, label: 'For someone else ?', value: '1'
+      render 'form-errors', form: form
+    -%}
+
+    <div class='hidden group-has-[input[name="properties[\_\_shopify\_send\_gift\_card\_to\_recipient]"]:checked]:grid grid-cols-1 md:grid-cols-2 gap-sm'>
+      {%- liquid
+        assign reciepient_email_id = 'Recipient-email-' | append: section.id
+        assign reciepient_email_label = 'recipient.form.email_label' | t
+        assign reciepient_email_error = null
+        if form.errors contains 'email'
+          capture reciepient_email_error
+            echo form.errors.messages.email
+          endcapture
+        endif
+      -%}
+
+      <div class='col-span-1'>
+        {%- render 'form-field',
+          kind: 'input',
+          type: 'email',
+          autocomplete: 'email',
+          name: 'properties[Recipient email]',
+          id: reciepient_email_id,
+          value: form.email,
+          help_text: 'Email address where the gift card will be sent',
+          label: reciepient_email_label,
+          error: reciepient_email_error,
+          error_text: reciepient_email_error
+        -%}
+      </div>
+
+      {%- liquid
+        assign reciepient_name_id = 'Recipient-name-' | append: section.id
+        assign reciepient_name_label = 'recipient.form.name_label' | t
+        assign reciepient_name_error = null
+        if form.errors contains 'name'
+          capture reciepient_name_error
+            echo form.errors.messages.name
+          endcapture
+        endif
+      -%}
+
+      <div class='col-span-1'>
+        {%- render 'form-field',
+          kind: 'input',
+          autocomplete: 'name',
+          name: 'properties[Recipient name]',
+          id: reciepient_name_id,
+          value: form.name,
+          help_text: 'Name of the person who will receive the gift card',
+          label: reciepient_name_label,
+          error: reciepient_name_error,
+          error_text: reciepient_name_error
+        -%}
+      </div>
+
+      <div class='col-span-1 md:col-span-2'>
+        {%- liquid
+          assign max_chars_message = 200
+          assign reciepient_message_id = 'Recipient-message-' | append: section.id
+          assign reciepient_message_label = 'recipient.form.message_label' | t
+          assign reciepient_message_error = null
+          if form.errors contains 'message'
+            capture reciepient_message_error
+              echo form.errors.messages.message
+            endcapture
+          endif
+        -%}
+
+        {%- render 'form-field',
+          kind: 'textarea',
+          name: 'properties[Message]',
+          id: reciepient_message_id,
+          value: form.message,
+          help_text: 'Message to include with the gift card',
+          label: reciepient_message_label,
+          error: reciepient_message_error,
+          error_text: reciepient_message_error,
+          maxlength: max_chars_message
+        -%}
+      </div>
+
+      {%- liquid
+        assign reciepient_send_on_id = 'Recipient-send-on-' | append: section.id
+        assign reciepient_send_on_label = 'recipient.form.send_on_label' | t
+        assign reciepient_send_on_error = null
+        if form.errors contains 'send_on'
+          capture reciepient_send_on_error
+            echo form.errors.messages.send_on
+          endcapture
+        endif
+      -%}
+
+      <div class='col-span-1'>
+        {%- render 'form-field',
+          kind: 'input',
+          type: 'date',
+          autocomplete: 'send_on',
+          name: 'properties[Send on]',
+          id: reciepient_send_on_id,
+          value: form.send_on,
+          help_text: 'Date when the gift card will be sent',
+          label: reciepient_send_on_label,
+          error: reciepient_send_on_error,
+          error_text: reciepient_send_on_error
+        -%}
+      </div>
+    </div>
+
+    {% comment %}
+      - Set this as True if you would like to en-force Shopify Backend enforcing presence of Email etc.
+      - Set it to if_present for optional validation
+    {% endcomment %}
+    <input
+      type='hidden'
+      name='{{ gift_card_recipient_control_flag }}'
+      value='if_present'
+      id='Recipient-control-{{ section.id }}'
+    >
+    <input
+      type='hidden'
+      name='properties[__shopify_offset]'
+      value=''
+      id='Recipient-timezone-offset-{{ section.id }}'
+      disabled
+    >
+  </recipient-form>
+</div>

@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  details > summary {
+    list-style: none;
+  }
+
+  details > summary::marker, /* Latest Chrome, Edge, Firefox */
+  details > summary::-webkit-details-marker /* Safari */ {
+    display: none;
+  }
+
+  :root {
+    --font-family-primary: 'Poppins';
+    --font-family-secondary: 'Poppins';
+    --font-family-tertiary: 'Poppins';
+    --font-family-quaternary: 'Poppins';
+  }
+
+  .remove-arrow::-webkit-inner-spin-button,
+  .remove-arrow::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .remove-arrow {
+    -moz-appearance: textfield;
+  }
+
+  html:has(modal-dialog[open]) {
+    @apply overflow-hidden;
+  }
+
+  swiper-container {
+    @apply text-t-foreground;
+    --swiper-theme-color: currentColor;
+    --swiper-pagination-bottom: 0;
+  }
+}
+
+@layer components {
+  .rte > *:first-child {
+    @apply mt-0;
+  }
+
+  .rte > *:last-child {
+    @apply mb-0;
+  }
+
+  .rte table {
+    @apply table-fixed;
+  }
+
+  @screen sm {
+    .rte table td {
+      @apply px-5;
+    }
+  }
+
+  .rte img {
+    @apply mb-4 h-auto max-w-full rounded border;
+  }
+
+  .rte ul,
+  .rte ol {
+    @apply list-inside pl-8;
+  }
+
+  .rte > ul > li,
+  .rte > ol > li {
+    @apply list-disc last:mb-0;
+  }
+
+  .rte a {
+    @apply underline hover:decoration-2;
+  }
+
+  .rte blockquote {
+    @apply inline-flex;
+  }
+
+  .rte blockquote > * {
+    @apply -my-2;
+  }
+
+  /* Pandectes GDPR Compliance */
+  .cc-window.cc-floating {
+    @apply !rounded-md !bg-p-lightest !bg-opacity-60 !backdrop-blur-md;
+  }
+
+  .cc-btn {
+    @apply !text-body !bg-p-brand-01 !rounded-forms-radius hover:!bg-t-brand-secondary hover:!text-t-foreground;
+  }
+
+  .cc-message {
+    @apply !text-body;
+  }
+}

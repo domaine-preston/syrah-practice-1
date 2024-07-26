@@ -1,0 +1,9 @@
+{
+  "layout": "styleguide",
+  "sections": {
+    "main": {
+      "type": "component-styleguide"
+    }
+  },
+  "order": ["main"]
+}

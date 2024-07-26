@@ -1,0 +1,47 @@
+{% liquid
+  assign default_height = image.width | divided_by: image.aspect_ratio
+  assign width = width | default: image.width
+  assign height = height | default: default_height
+  assign loading = loading | default: 'lazy'
+%}
+{% if container %}
+  <div
+    class='{{ container_class }} relative'
+    style='padding-top: {{ 1 | divided_by: image.aspect_ratio | times: 100 }}%;'
+  >
+{% endif %}
+<img
+  {% if id %}
+    id='{{ id }}'
+  {% endif %}
+  srcset='
+    {% if image.width >= 160 %}{{ image | image_url: width: 160 }} 160w,{% endif %}
+    {% if image.width >= 240 %}{{ image | image_url: width: 240 }} 240w,{% endif %}
+    {% if image.width >= 320 %}{{ image | image_url: width: 320 }} 320w,{% endif %}
+    {% if image.width >= 480 %}{{ image | image_url: width: 480 }} 480w,{% endif %}
+    {% if image.width >= 640 %}{{ image | image_url: width: 640 }} 640w,{% endif %}
+    {% if image.width >= 768 %}{{ image | image_url: width: 768 }} 768w,{% endif %}
+    {% if image.width >= 1024 %}{{ image | image_url: width: 1024 }} 1024w,{% endif %}
+    {% if image.width >= 1280 %}{{ image | image_url: width: 1280 }} 1280w,{% endif %}
+    {% if image.width >= 1366 %}{{ image | image_url: width: 1366 }} 1366w,{% endif %}
+    {% if image.width >= 1440 %}{{ image | image_url: width: 1440 }} 1440w,{% endif %}
+    {% if image.width >= 1600 %}{{ image | image_url: width: 1600 }} 1600w,{% endif %}
+    {% if image.width >= 1920 %}{{ image | image_url: width: 1920 }} 1920w,{% endif %}
+    {% if image.width >= 2560 %}{{ image | image_url: width: 2560 }} 2560w,{% endif %}
+  '
+  sizes='{{ sizes }}'
+  src='{{ image | image_url: width: width }}'
+  loading='{{ loading }}'
+  alt='{{ image.alt | escape }}'
+  width='{{ width }}'
+  height='{{ height }}'
+  {% if attributes != blank %}
+    {{- attributes }}
+  {% endif %}
+  {% if class != blank %}
+    class='{{ class }}'
+  {% endif %}
+>
+{% if container %}
+  </div>
+{% endif %}

@@ -1,0 +1,47 @@
+{% comment %}
+  Render a button that toggles a dialog element.
+
+  Accepts:
+  - as: {String} The element to render (default: 'button')
+  - label: {String} The button label (required)
+  - modal_id: {String} The id of the dialog element to toggle (required)
+  - toggle_class: {String} Additional classes for the button (optional)
+  - toggle_button_variant: {String} The button variant (default: 'primary')
+  - class: {String} Additional classes for the dialog-toggle element (optional)
+  - toggle_element: {String} Custom element to render as the toggle button (optional)
+
+
+  render 'modal-dialog-toggle', as: 'button', label: 'Toggle Modal', modal_id: 'modal-sample', toggle_class: 'button--primary', class: 'dialog-toggle'
+{% endcomment %}
+
+{%- liquid
+  assign as = 'button'
+  assign label = label
+  assign modal_id = modal_id
+  assign toggle_class = toggle_class
+  assign toggle_button_variant = toggle_button_variant | default: 'primary'
+  assign toggle_element = toggle_element
+  assign class = class | default: 'inline-flex place-items-center'
+  assign has_label = false
+
+  if toggle_element != blank or label != blank
+    assign has_label = true
+  endif
+-%}
+
+{%- if has_label or modal_id == blank -%}
+  <dialog-toggle modal-id='{{ modal_id }}' class='{{ class }}'>
+    {%- if toggle_element != blank -%}
+      {{ toggle_element }}
+    {%- else -%}
+      <{{ as }}
+        class='btn {{ toggle_class }}'
+        variant='{{ toggle_button_variant }}'
+        aria-haspopup='dialog'
+        aria-controls='{{ modal_id }}'
+      >
+        {{- label -}}
+      </{{ as }}>
+    {%- endif -%}
+  </dialog-toggle>
+{%- endif -%}

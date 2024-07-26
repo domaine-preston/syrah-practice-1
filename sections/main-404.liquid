@@ -1,0 +1,28 @@
+<div class='p-pagemargin w-full flex flex-col items-center justify-center'>
+  <div class='grid grid-cols-1 gap-xs text-center'>
+    <p class='utility'>{{ 'templates.404.subtext' | t }}</p>
+    <h1 class='h4 my-0'>{{ 'templates.404.title' | t }}</h1>
+    <div>
+      <a
+        class='btn'
+        variant='tertiary'
+        href='{{ section.settings.cta_url | default: routes.all_products_collection_url }}'
+      >
+        {{ 'general.continue_shopping' | t }}
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.404.title",
+  "settings": [
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "t:sections.404.cta_url.label"
+    }
+  ]
+}
+{% endschema %}

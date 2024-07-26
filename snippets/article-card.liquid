@@ -1,0 +1,68 @@
+{% comment %}
+  Renders an article card for a given blog with settings to either show the image or not.
+
+  Accepts:
+  - blog: {Object} Blog object
+  - article: {Object} Article object
+  - show_date: {String} The setting either show the article date or not. If it's not included it will not show the image by default
+  - show_author: {String} The setting either show the article author or not. If it's not included it will not show the author by default
+  - lazy_load: {Boolean} Image should be lazy loaded. Default: true (optional)
+
+  Usage:
+  {% render 'article-card' blog: blog, article: article %}
+{% endcomment %}
+
+{%- if article and article != empty -%}
+  {%- capture sizes -%}(min-width: 1440px) 300px, (min-width: 1024px) 33vw, 50vw{%- endcapture -%}
+  {%- assign image_widths = '300, 500, 750, 800' -%}
+
+  <article
+    aria-labelledby='Article-{{ article.id }}'
+    class='grid grid-cols-1 gap-y-xs'
+  >
+    {%- if article.image -%}
+      <div class='relative aspect-video'>
+        {%- render 'image',
+          image: article.image,
+          class: 'h-full w-full inset-0 absolute',
+          sizes: sizes,
+          width: 300,
+          widths: image_widths,
+          loading: true
+        -%}
+      </div>
+    {%- endif -%}
+
+    <div class='grid grid-cols-1 gap-y-xs items-start place-content-start'>
+      <h3 id='Article-{{ article.id }}' class='h5'>
+        <a href='{{ article.url }}'>
+          {{ article.title | truncate: 50 | escape }}
+        </a>
+      </h3>
+      <div class='leading-none text-end'>
+        {%- if show_date -%}
+          <span class='caption'>{{ article.published_at | time_tag: format: 'date' }}</span>
+        {%- endif -%}
+        {%- if show_author -%}
+          <span>{{ article.author }}</span>
+        {%- endif -%}
+      </div>
+      {%- if show_excerpt -%}
+        {%- if article.excerpt.size > 0 or article.content.size > 0 -%}
+          <p class='rte'>
+            {%- if article.excerpt.size > 0 -%}
+              {{ article.excerpt | strip_html | truncatewords: 30 }}
+            {%- else -%}
+              {{ article.content | strip_html | truncatewords: 30 }}
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+        <div class='caption text-right'>
+          {%- if article.comments_count > 0 and blog.comments_enabled? -%}
+            <span>{{ 'blogs.article.comments' | t: count: article.comments_count }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </article>
+{%- endif -%}

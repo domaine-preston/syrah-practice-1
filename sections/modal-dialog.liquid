@@ -1,0 +1,156 @@
+{%- liquid
+  capture modal_content
+    echo '<div class="px-sm pb-md grid grid-cols-1 gap-sm">'
+    for block in section.blocks
+      case block.type
+        when '@app'
+          render block
+        when 'content'
+          echo block.settings.content
+          echo block.settings.page.content
+      endcase
+    endfor
+    echo '</div>'
+  endcapture
+
+  assign id = section.settings.id | default: section.id | handleize
+  if section.settings.kind == 'modal' and section.settings.max_modal
+    assign size = 'modal-max'
+  endif
+
+  assign url = section.settings.url | default: blank
+-%}
+
+{%- render 'modal-dialog',
+  content: modal_content,
+  id: id,
+  title: section.settings.title,
+  anchor: section.settings.anchor,
+  type: section.settings.kind,
+  close_on_backdrop_click: section.settings.close_on_backdrop_click,
+  without_title: section.settings.hide_title,
+  size: size,
+  url: url
+-%}
+{%- if request.design_mode -%}
+  <script>
+    document.addEventListener('shopify:section:select', function () {
+      const target = event.target
+      const dialog = target.querySelector('#{{ id }}')
+      if (dialog) {
+        dialog.$emit('modal-dialog::open', {{ id | json }})
+      }
+    })
+
+    document.addEventListener('shopify:section:deselect', function () {
+      const target = event.target
+      const dialog = target.querySelector('#{{ id }}')
+      if (dialog && dialog.open) {
+        dialog.$emit('modal-dialog::close', {{ id | json }})
+      }
+    })
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Modal Dialog",
+  "settings": [
+    {
+      "type": "text",
+      "id": "id",
+      "label": "Modal ID",
+      "info": "If not provided, a section ID will be used. Note: Section ID's might dynamically change, so it's recommended to provide a custom ID."
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_title",
+      "label": "Hide Title",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "kind",
+      "label": "Kind",
+      "options": [
+        {
+          "value": "drawer",
+          "label": "Drawer"
+        },
+        {
+          "value": "modal",
+          "label": "Modal"
+        }
+      ],
+      "default": "drawer"
+    },
+    {
+      "type": "checkbox",
+      "id": "max_modal",
+      "label": "Full Screen Mode",
+      "default": false,
+      "info": "Valid only when kind is Modal"
+    },
+    {
+      "type": "checkbox",
+      "id": "close_on_backdrop_click",
+      "label": "Close on Backdrop Click",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "anchor",
+      "label": "Drawer Anchor",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right",
+      "info": "Valid only when kind is Drawer"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Load URL",
+      "info": "If provided, the modal will load the URL content instead of the content provided in the section."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content",
+      "name": "Content",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Page"
+        }
+      ]
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Modal Dialog"
+    }
+  ]
+}
+{% endschema %}

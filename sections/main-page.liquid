@@ -1,0 +1,82 @@
+<div class='p-pagemargin 2xl:container grid grid-cols-1 gap-y-2xs'>
+  <h1 class='{{ section.settings.heading_size }}'>
+    {{ page.title | escape }}
+  </h1>
+
+  {%- for block in section.blocks -%}
+    {% case block.type %}
+      {% when 'page_content' %}
+        <div class='rte'>
+          {{ page.content }}
+        </div>
+      {% else %}
+        {% render block %}
+    {% endcase %}
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "enabled_on": {
+    "templates": ["page"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Heading 2"
+        },
+        {
+          "value": "h1",
+          "label": "Heading 1"
+        },
+        {
+          "value": "h3",
+          "label": "Heading 3"
+        },
+        {
+          "value": "h4",
+          "label": "Heading 4"
+        },
+        {
+          "value": "h5",
+          "label": "Heading 5"
+        },
+        {
+          "value": "h6",
+          "label": "Heading 6"
+        },
+        {
+          "value": "p",
+          "label": "Paragraph"
+        },
+        {
+          "value": "caption",
+          "label": "Caption"
+        }
+      ],
+      "default": "h3",
+      "label": "t:sections.all.heading_size.label"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.main-page.page_content",
+      "type": "page_content",
+      "settings": []
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.main-page.name"
+    }
+  ]
+}
+{% endschema %}

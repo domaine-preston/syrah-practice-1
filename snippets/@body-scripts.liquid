@@ -1,0 +1,45 @@
+{% comment %}
+  Dynamic scripts that are loaded based on the content of the page.
+  This is used to load scripts that are only needed on certain pages.
+  The entry points are defined in the content of the page.
+
+  If the content is loaded via AJAX, the entry points will not be loaded.
+  So, you will need to manually add the entry points to the content on this snippet.
+
+  eg. <!-- ##entry##core-main-product,core-dialog##endentry## -->
+
+  We have a helper snippet that you can use to add these entry points to your content:
+  {%- render '@needs-script', entries: 'core-main-product,core-dialog' -%}
+  {%- render '@needs-script', entries: 'core-quickshop' -%}
+{% endcomment %}
+{%- liquid
+  assign entry_point_start = '##entry##'
+  assign entry_point_end = '##endentry##'
+  assign entries_in_content = content | split: entry_point_start
+  assign entries_to_load = '' | split: ''
+
+  for entry in entries_in_content
+    if entry contains entry_point_end
+      assign entries = entry | split: entry_point_end | first | split: ','
+      if entries.size > 0
+        assign entries_to_load = entries_to_load | concat: entries
+      endif
+    endif
+  endfor
+
+  assign entries_to_load = entries_to_load | uniq
+-%}
+
+{%- for entry in entries_to_load -%}
+  {%- assign asset_name = entry | prepend: '-' | append: '.js' -%}
+  <script defer type='module' src='{{ asset_name | asset_url }}'></script>
+{%- endfor -%}
+
+{%- if content contains '<modal-dialog' -%}
+  <script defer type='module' src='{{ '-core-dialog.js' | asset_url }}'></script>
+{%- endif -%}
+
+{%- if content contains '<swiper' -%}
+  <script defer type='module' src='{{ '-vendor-swiper.js' | asset_url }}'></script>
+{%- endif -%}
+<script defer type='module' src='{{ '-core-dynamic-product-card.js' | asset_url }}'></script>

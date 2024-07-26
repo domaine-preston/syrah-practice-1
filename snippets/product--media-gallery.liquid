@@ -1,0 +1,235 @@
+{% comment %}
+  Renders a product media gallery. Should be used with 'media-gallery.js'
+  Also see 'product-media-modal'
+
+  Accepts:
+  - product: {Object} Product liquid object
+  - section: {Object} Section liquid object
+  - is_quick_shop: {Boolean} Whether the gallery is being rendered in a quick shop modal
+
+  Usage:
+  {% render 'product-media-gallery', product: product, section: section %}
+{% endcomment %}
+
+{%- liquid
+  assign selected_variant = product.selected_or_first_available_variant | default: product.variants[0]
+  assign show_all_media = product.has_only_default_variant
+
+  unless show_all_media
+    assign first_assigned_position = 0
+
+    for media in product.images
+      if media.attached_to_variant?
+        assign first_assigned_position = forloop.index0
+        break
+      endif
+    endfor
+
+    assign common_media = product.media | slice: 0, first_assigned_position
+    assign variant_featured_media_position = selected_variant.featured_media.position
+    assign next_variant_image_position = product.media.size
+
+    for image in product.images
+      if forloop.index >= variant_featured_media_position
+        if image.attached_to_variant? and image.position != variant_featured_media_position
+          for media in product.media
+            assign media_url = media | image_url: width: 100 | split: '?' | first
+            assign image_url = image | image_url: width: 100 | split: '?' | first
+            if media_url == image_url
+              assign matching_media = media
+              break
+            endif
+          endfor
+          assign next_variant_image_position = matching_media.position | default: image.position
+          break
+        endif
+      endif
+    endfor
+
+    assign variant_featured_media_position_zero = variant_featured_media_position | minus: 1
+    assign variant_media_count = next_variant_image_position | minus: variant_featured_media_position
+
+    if variant_media_count <= 0
+      assign variant_media_count = 1
+    endif
+    assign variant_media = product.media | slice: variant_featured_media_position_zero, variant_media_count
+    assign final_media = variant_media | concat: common_media
+  else
+    assign final_media = product.media
+  endunless
+
+  assign zoom_gallery_id = 'MediaGallery-' | append: section.id | append: '-zoom-gallery'
+-%}
+
+{% comment %}
+  Media for Variant
+  Features Variant Image: The assigned image is the first image for the variant
+  Variant Only Image: Render all image until we reach the first image belonging to a variant and then break
+  Common Image: Loop over image till we reach the first image with a variant assigned and break
+{% endcomment %}
+
+{%- capture zoom_button -%}
+  <button class="h6 text-t-foreground p-xs hover:text-t-link">
+    {%- render 'icon' with 'icon-zoom' -%}
+    <span class="sr-only">{{ 'products.product.media.zoom' | t }}</span>
+  </button>
+{%- endcapture -%}
+
+{%- capture thumbnails_id -%}
+  MediaGallery-{{ section.id }}-thumbs-swiper
+{%- endcapture -%}
+
+{%- capture main_id -%}
+  MediaGallery-{{ section.id }}-main-swiper
+{%- endcapture -%}
+
+<div
+  id='MediaGallery-{{ section.id }}'
+  role='region'
+  sub-section-id='MediaGallery-{{ section.id }}'
+  aria-label='{{ 'products.product.media.gallery_viewer' | t }}'
+>
+  {% capture modal_content %}
+    <div class="grid gap-x-xs grid-cols-[50px,minmax(0,_1fr)] md:grid-cols-[80px,minmax(0,_1fr)] lg:grid-cols-[120px,minmax(0,_1fr)] size-full">
+      <div class="p-xs">
+        <swiper-container
+          class='block'
+          direction='vertical'
+          slides-per-view='auto'
+          space-between='10'
+          mousewheel='true'
+          id='{{ thumbnails_id }}-zoom'
+          controller-control='#{{ main_id }}'
+        >
+          {% for media in final_media %}
+            <swiper-slide class='w-full h-auto relative block bg-p-lightest aspect-square border border-solid border-t-border [&.swiper-slide-thumb-active]:border-t-foreground duration-300 transition'>
+              {%- render 'product--media-gallery__media',
+                media: media,
+                width: 90,
+                object_fit: 'contain',
+                widths: '40, 60, 80, 90',
+                loading: 'eager',
+                preview: true
+              -%}
+            </swiper-slide>
+          {% endfor %}
+        </swiper-container>
+      </div>
+      {%- render '@needs-script', entries: 'core-swiper-with-media' -%}
+      <swiper-with-media class="block relative size-full">
+        <swiper-container
+          init="false"
+          class='h-full block whitespace-nowrap overflow-clip'
+          watch-slides-progress='true'
+          thumbs-swiper='#{{ thumbnails_id }}-zoom'
+          auto-scroll-offset='true'
+          navigation='true'
+          slides-per-view='1'
+          id='{{ main_id }}-zoom'
+        >
+          {% for media in final_media %}
+            <swiper-slide class='w-full h-full relative block bg-p-lightest'>
+              {%- render 'product--media-gallery__media',
+                media: media,
+                width: 600,
+                preload: forloop.first,
+                object_fit: 'contain',
+                widths: '800, 1000, 1200, 1400, 1600, 2000',
+              -%}
+
+              {%- if media.media_type == 'image' -%}
+                <div class='swiper-lazy-preloader'></div>
+              {%- endif -%}
+            </swiper-slide>
+          {% endfor %}
+        </swiper-container>
+      </swiper-with-media>
+    </div>
+  {% endcapture %}
+
+  {%- unless is_quick_shop -%}
+    {% render 'modal-dialog', content: modal_content, id: zoom_gallery_id, type: 'modal', size: 'modal-max' %}
+  {%- endunless -%}
+
+  <div
+    {% if is_quick_shop %}
+      class='grid grid-cols-1 gap-y-sm place-content-start'
+    {% else %}
+      class='grid grid-cols-1 gap-y-sm lg:grid-cols-[90px,minmax(0,_1fr)] gap-x-xs place-content-start lg:sticky lg:top-[--header-height]'
+    {% endif %}
+  >
+    {%- unless is_quick_shop -%}
+      <div class='relative overflow-clip'>
+        <swiper-container
+          class='w-full hidden lg:block absolute top-0 left-0 h-full'
+          direction='vertical'
+          slides-per-view='auto'
+          space-between='12'
+          mousewheel='true'
+          id='{{ thumbnails_id }}'
+        >
+          {% for media in final_media %}
+            <swiper-slide class='w-full h-auto relative block bg-p-lightest mb-3 aspect-square border border-solid border-t-border [&.swiper-slide-thumb-active]:border-t-foreground duration-300 transition'>
+              {%- render 'product--media-gallery__media',
+                media: media,
+                width: 90,
+                object_fit: 'contain',
+                widths: '40, 60, 80',
+                loading: 'eager',
+                preview: true
+              -%}
+            </swiper-slide>
+          {% endfor %}
+        </swiper-container>
+      </div>
+    {%- endunless -%}
+
+    <div class='aspect-square relative'>
+      {%- render '@needs-script', entries: 'core-swiper-with-media' -%}
+      <swiper-with-media class='w-full h-full block'>
+        <swiper-container
+          class='w-full h-full block whitespace-nowrap overflow-clip'
+          init='false'
+          watch-slides-progress='true'
+          thumbs-swiper='#{{ thumbnails_id }}'
+          controller-control='#{{ main_id }}-zoom'
+          auto-scroll-offset='true'
+          navigation='true'
+          id='{{ main_id }}'
+        >
+          {% for media in final_media %}
+            <swiper-slide class='w-full h-full relative block bg-p-lightest'>
+              {%- if forloop.first -%}
+                {%- assign fetchpriority = 'high' -%}
+              {%- endif -%}
+
+              {%- render 'product--media-gallery__media',
+                media: media,
+                width: 600,
+                preload: forloop.first,
+                object_fit: 'contain',
+                widths: '300, 600, 800, 1000, 1200',
+                fetchpriority: fetchpriority
+              -%}
+
+              {%- if media.media_type == 'image' -%}
+                {%- unless forloop.first -%}
+                  <div class='swiper-lazy-preloader'></div>
+                {%- endunless -%}
+              {%- endif -%}
+
+              {%- unless is_quick_shop -%}
+                {%- render 'modal-dialog-toggle',
+                  modal_id: zoom_gallery_id,
+                  label: 'Toggle Modal',
+                  toggle_element: zoom_button,
+                  class: 'absolute bottom-sm right-sm z-10'
+                -%}
+              {%- endunless -%}
+            </swiper-slide>
+          {% endfor %}
+        </swiper-container>
+      </swiper-with-media>
+    </div>
+  </div>
+</div>

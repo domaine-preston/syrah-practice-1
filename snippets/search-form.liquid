@@ -1,0 +1,55 @@
+{%- liquid
+  assign input_placeholder = 'general.search.search' | t
+-%}
+{%- render '@needs-script', entries: 'predictive-search' -%}
+<predictive-search data-loading-text='{{ 'accessibility.loading' | t }}'>
+  <form
+    action='{{ routes.search_url }}'
+    method='get'
+    role='search'
+    data-form='{{ input_id }}'
+    class='grow'
+  >
+    <div class='flex gap-2 items-center lg:max-w-[80%] mx-auto' autofocus>
+      {% assign escaped_search_terms = search.terms | escape %}
+
+      {% capture input_attributes %}
+        role='combobox'
+        aria-expanded='false'
+        aria-owns='predictive-search-results'
+        aria-controls='predictive-search-results'
+        aria-haspopup='listbox'
+        aria-autocomplete='list'
+        autocorrect='off'
+        autocomplete='off'
+        autocapitalize='off'
+        spellcheck='false'
+      {% endcapture %}
+
+      {%- render 'form-field',
+        kind: 'input',
+        name: 'q',
+        id: input_id,
+        label: input_placeholder,
+        type: 'search',
+        value: escaped_search_terms,
+        autocomplete: 'off',
+        attributes: input_attributes,
+        wrapper_class: 'w-full'
+      -%}
+
+      <button data-search-submit type='submit' class='flex align-middle'>
+        <span>{% render 'icon' with 'icon-search', size: 18 %}</span>
+        <span class='sr-only'>{{ 'general.search.search' | t }}</span>
+      </button>
+    </div>
+
+    <div class='overflow-y-auto' tabindex='-1' data-predictive-search>
+      {% comment %} {% render 'icon' with 'icon-spinner', size: 18 %} {% endcomment %}
+    </div>
+
+    <span id='predictive-search-status' class='visually-hidden' role='status' aria-hidden='true'></span>
+
+    <input type='hidden' name='options[prefix]' value='last'>
+  </form>
+</predictive-search>

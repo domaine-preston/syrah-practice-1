@@ -1,0 +1,51 @@
+{%- assign form_id = 'Footer' | append: type | append: 'Form' -%}
+{%- form 'localization', id: form_id, class: 'min-w-40' -%}
+  {%- if type == 'currency' -%}
+    {%- assign label = 'localization.country_label' | t -%}
+
+    {%- capture id -%}
+      {{ form_id }}_country_code
+    {%- endcapture -%}
+
+    {%- capture options -%}
+      {%- for country in localization.available_countries -%}
+        <option
+          value='{{ country.iso_code }}'
+          {% if country.iso_code == localization.country.iso_code %}
+            selected
+          {% endif %}
+        >
+          {{ country.name }} ({{ country.currency.iso_code }}
+          {{ country.currency.symbol }})
+        </option>
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    {%- render 'form-field',
+      kind: 'select',
+      name: 'country_code',
+      id: id,
+      label: label,
+      value: localization.country.iso_code,
+      options: options,
+      custom_select: true,
+      attributes: 'onchange="this.form?.submit()"'
+    -%}
+  {%- endif -%}
+
+  {%- if type == 'language' -%}
+    <label for='{{ form_id }}_locale_code'>{{ 'localization.language_label' | t }}</label>
+    <select name='locale_code' id='{{ form_id }}_locale_code' onchange='this.form?.submit()'>
+      {%- for language in localization.available_languages -%}
+        <option
+          value='{{ language.iso_code }}'
+          {% if language.iso_code == localization.language.iso_code %}
+            selected
+          {% endif %}
+        >
+          {{ language.endonym_name | capitalize }}
+        </option>
+      {%- endfor -%}
+    </select>
+  {%- endif -%}
+{%- endform -%}

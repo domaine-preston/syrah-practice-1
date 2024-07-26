@@ -1,0 +1,62 @@
+{% comment %}
+  Docs: https://shopify.dev/docs/api/liquid/filters/image_tag
+  Render an image tag.
+
+  Accepts:
+  - image: {Object} Image object
+  - width: {String} The width of the image
+  - height: {String} The height of the image
+  - alt: {String} The alt text of the image
+  - class: {String} The class of the image
+  - id: {String} The id of the image
+  - sizes: {String} The sizes attribute of the image
+  - object_fit: {String} The object-fit of the image
+  - preload: {Boolean} The preload of the image
+  - loading: {String} The loading of the image
+  - container: {Boolean} The container of the image
+  - container_class: {String} The container class of the image
+  - widths: {String} The widths of the image eg. '200, 300, 400, 500, 600, 700, 800, 900, 1000' will the srcset attribute (optional)
+
+  Usage:
+  render 'image', image: image, class: 'image-class', widths: '200, 300, 400, 500, 600', id: 'image-id', sizes: '100vw', object_fit: 'cover', preload: true, loading: 'lazy', container: true, container_class: 'container-class'
+{% endcomment %}
+
+{%- if container -%}
+  <div
+    class='{{ container_class }} relative'
+    style='padding-top: {{ 1 | divided_by: image.aspect_ratio | times: 100 }}%;'
+  >
+{%- endif -%}
+
+{%- liquid
+  assign default_height = image.width | divided_by: image.aspect_ratio
+  assign fetchpriority = fetchpriority | default: 'auto'
+  assign width = width | default: image.width
+  assign height = height | default: default_height
+  assign loading = loading | default: 'lazy'
+  assign preload = preload | default: false, allow_false: true
+  assign alt = alt | default: image.alt
+  assign image_class = 'w-full block' | append: ' ' | append: class
+  assign object_fit = object_fit | default: 'cover'
+  assign widths = widths | default: null
+
+  case object_fit
+    when 'contain'
+      assign image_class = image_class | append: ' object-contain'
+    when 'cover'
+      assign image_class = image_class | append: ' object-cover'
+    when 'fill'
+      assign image_class = image_class | append: ' object-fill'
+    when 'none'
+      assign image_class = image_class | append: ' object-none'
+  endcase
+
+  if preload
+    assign loading = null
+  endif
+
+  echo image | image_url: width: width | image_tag: height: height, loading: loading, id: id, sizes: sizes, class: image_class, widths: widths, fetchpriority: fetchpriority
+-%}
+{%- if container -%}
+  </div>
+{%- endif -%}

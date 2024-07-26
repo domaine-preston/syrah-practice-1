@@ -1,0 +1,477 @@
+{% comment %}
+  Renders a form field with a label for the given field name, type, and options.
+
+  Accepts:
+    - kind (required): The kind of field to render. Supported kinds are 'input', 'select', 'textarea', 'checkbox', 'radio', and 'switch'.
+    - name (required): The name of the field.
+    - id (required): The id attribute of the field.
+    - label (required): The label for the field.
+    - type (optional): The type attribute of the field.
+    - value (optional): The value of the field.
+    - required (optional): Whether the field is required.
+    - error (optional) (Boolean): Whether the field has an error.
+    - disabled (optional) (Boolean): Whether the field is disabled.
+    - attributes (optional): Additional attributes to add to the field. eg. multiple etc.
+    - wrapper_class (optional): The class of the field wrapper.
+    - wrapper_attributes (optional): Additional attributes to add to the field wrapper.
+    - help_text (optional): The help text for the field.
+    - error_text (optional): The error text for the field.
+    - options (optional): The options for the field. Only required for 'select'.
+    - checked (optional): Whether the field is checked. Only required for 'checkbox', 'radio' and 'switch'.
+    - label_class (optional): The class of the label.
+    - placeholder (optional): The placeholder for the field. Only used for 'textarea'.
+    - icon (optional): The icon for the field. Only used for 'input'.
+    - autocomplete (optional): The autocomplete attribute for the field. Only used for 'input'.
+    - autofocus (optional): The autofocus attribute for the field. Only used for 'input'.
+    - custom_select (optional): Whether to use a custom select. Only used for 'select'.
+    - always_show_placeholder (optional): Whether to always show the placeholder. Only used for 'select'.
+    - form_id (optional): The form id for the field. Only used for 'select'.
+
+  Usage:
+  {%- render 'form-field', kind: 'input', name: 'name', id: 'first_name', label: 'First Name', help_text: 'Some help text here' -%}
+{% endcomment %}
+
+{%- liquid
+  assign has_errors = false
+  assign id = id | default: name
+  assign label = label | default: name | capitalize
+  if error != blank
+    assign has_errors = true
+  endif
+
+  if kind == 'radio' or kind == 'checkbox' or kind == 'switch'
+    assign error_text = blank
+  endif
+
+  if has_errors and error_text != blank
+    assign help_text = error_text
+  endif
+-%}
+
+{%- capture field_content -%}
+  {%- case kind -%}
+    {%- when 'input' -%}
+      {%- assign wrapper_class = wrapper_class | default: 'flex flex-col gap-2xs' -%}
+      {% if icon != blank %}
+        {%- assign icon_class = 'pl-7 lg:pl-7' -%}
+      {% endif %}
+      <div class="{{ wrapper_class }} group">
+        <div
+          class="relative w-full group peer"
+          {% if has_errors %}
+            error
+          {% endif %}
+        >
+          <input
+            class="{{ icon_class }} text-base md:text-body block w-full border appearance-none text-t-foreground disabled:text-t-border rounded-forms-radius px-sm-forms-padding lg:px-lg-forms-padding pt-sm-forms-padding lg:pt-lg-forms-padding h-sm-forms-inputheight lg:h-lg-forms-inputheight bg-gray-50 bg-t-background border-t-foreground-secondary disabled:border-t-border focus:outline-none focus:ring-0 focus:border-t-foreground peer group-[[error]]:ring-u-error group-[[error]]:border-[transparent] group-[[error]]:ring-2"
+            placeholder=" "
+            type="{{- type | default: 'text' -}}"
+            id="{{ id }}"
+            name="{{ name }}"
+            {% if value != '' %}
+              value="{{ value }}"
+            {% endif %}
+
+            {% if help_text != blank %}
+              aria-describedby="{{ id }}_text"
+            {% endif %}
+
+            {% if has_errors %}
+              aria-invalid='true'
+            {% endif %}
+
+            {% if disabled %}
+              disabled
+            {% endif %}
+
+            {% if required %}
+              required
+            {% endif %}
+
+            {% if autocomplete %}
+              autocomplete="{{ autocomplete }}"
+            {% endif %}
+
+            {% if form_id != blank %}
+              form="{{ form_id }}"
+            {% endif %}
+
+            {% if autofocus %}
+              autofocus
+            {% endif %}
+
+            {{ attributes }}
+          />
+
+          {%- if icon != blank -%}
+            <div
+              class="absolute size-sm-forms-iconsize lg:size-lg-forms-iconsize inset-y-0 flex items-center pointer-events-none start-sm-forms-padding lg:start-sm-forms-padding text-t-foreground group-[[error]]:text-u-error h-sm-forms-inputheight lg:h-lg-forms-inputheigh"
+            >
+              {%- render 'icon' with icon, class: 'block' -%}
+            </div>
+          {%- endif -%}
+
+          {%- liquid
+            if icon != blank
+              assign label_class = label_class | append: ' start-7 lg:start-7 '
+            else
+              assign label_class = label_class | append: ' start-sm-forms-padding lg:start-sm-forms-padding '
+            endif
+          -%}
+          <label
+            for="{{ id }}"
+            class="{{  label_class }} absolute caption text-t-foreground-secondary duration-300 transform -translate-y-2.5 scale-75 top-3.5 z-10 origin-[0] peer-focus:text-t-foreground peer-disabled:text-t-border peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-2.5 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+          >
+            {{ label }}
+          </label>
+        </div>
+        {%- if help_text != blank -%}
+          <p id="{{ id }}_text" class="caption text-t-foreground-secondary flex items-center justify-start gap-x-2xs peer-[[error]]:text-u-error group-has-[[error]]:text-u-error">
+            {%- if has_errors -%}
+              {%- render 'icon' with 'icon-error', class: 'block' -%}
+            {%- endif -%}
+            <span>{{ help_text }}</span>
+          </p>
+        {%- endif -%}
+      </div>
+
+    {%- when 'textarea' -%}
+      {%- assign wrapper_class = wrapper_class | default: 'flex flex-col gap-2xs' -%}
+      <div class="{{ wrapper_class }} group">
+        <div
+          class="relative w-full grid-cols-1 group peer form-field gap-y-2xs"
+          {% if has_errors %}
+            error
+          {% endif %}
+        >
+          {%- if label != blank -%}
+            <label
+              for="{{ id }}"
+              class="caption text-t-foreground-secondary"
+            >
+              {{ label }}
+            </label>
+          {%- endif -%}
+          <textarea
+            id="{{ id }}"
+            name="{{ name }}"
+            rows="{{ rows | default: 4 }}"
+            value="{{ value }}"
+            class="block w-full border p-xs text-base md:text-body text-t-foreground bg-t-background disabled:text-t-border disabled:border-t-border rounded-forms-radius border-t-border focus:border-t-foreground placeholder-t-brand-secondary focus:outline-none focus:ring-0 group-[[error]]:ring-u-error group-[[error]]:border-[transparent] group-[[error]]:ring-2"
+
+            {% if placeholder != blank %}
+              placeholder="{{ placeholder }}"
+            {% endif %}
+
+            {% if help_text != blank %}
+              aria-describedby="{{ id }}_text"
+            {% endif %}
+
+            {% if disabled %}
+              disabled
+            {% endif %}
+
+            {% if required %}
+              required
+            {% endif %}
+
+            {% if form_id != blank %}
+              form="{{ form_id }}"
+            {% endif %}
+
+            {% if maxlength != blank %}
+              maxlength="{{ maxlength }}"
+            {% endif %}
+
+            {{ attributes }}
+          >
+            {%- if value != blank -%}
+              {{- value -}}
+            {%- endif -%}
+          </textarea>
+        </div>
+
+        {%- if help_text != blank -%}
+          <p id="{{ id }}_text" class="caption text-t-foreground-secondary flex items-center justify-start gap-x-2xs peer-[[error]]:text-u-error group-has-[[error]]:text-u-error">
+            {%- if has_errors -%}
+              {%- render 'icon' with 'icon-error', class: 'block' -%}
+            {%- endif -%}
+            <span>{{ help_text }}</span>
+          </p>
+        {%- endif -%}
+      </div>
+    {%- when 'radio' -%}
+      {%- assign wrapper_class = wrapper_class | default: 'inline-flex items-start justify-start gap-x-xs' -%}
+      <div class="{{ wrapper_class }} group/radio">
+        <label
+          class="relative flex items-center rounded-full cursor-pointer peer"
+          for="{{ id }}"
+        >
+          <input
+            type="radio"
+            class="relative transition-all border rounded-full appearance-none cursor-pointer disabled:border-t-border size-4 peer border-t-foreground-secondary text-t-foreground-secondary checked:border-t-foreground-secondary"
+            id="{{ id }}"
+            name="{{ name }}"
+            value="{{ value }}"
+            aria-labelledby="{{ id }}_label"
+
+            {% if help_text != blank %}
+              aria-describedby="{{ id }}_text"
+            {% endif %}
+
+            {% if disabled %}
+              disabled
+            {% endif %}
+
+            {% if required %}
+              required
+            {% endif %}
+
+            {% if form_id != blank %}
+              form="{{ form_id }}"
+            {% endif %}
+
+            {{ attributes }}
+          />
+          <span
+            class="absolute transition-[opacity,transform-] opacity-0 scale-0 pointer-events-none text-t-foreground top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100 peer-checked:scale-100"
+          >
+            {%- render 'icon' with 'icon-radio-circle', size: 10, class: 'block'  -%}
+          </span>
+        </label>
+        <label
+          class="mt-px cursor-pointer select-none"
+          for="{{ id }}"
+        >
+          <div>
+            <p id="{{ id }}_label" class="block text-body leading-none text-t-foreground group-has-[:disabled]/radio:text-t-disabled {{ label_class }}">
+              {{ label }}
+            </p>
+            {%- if help_text != blank -%}
+              <p id="{{ id }}_text" class="block mt-2xs text-caption text-t-foreground-secondary group-has-[:disabled]/radio:text-t-disabled">
+                {{ help_text }}
+              </p>
+            {%- endif -%}
+          </div>
+        </label>
+      </div>
+    {%- when 'checkbox' -%}
+      {%- assign wrapper_class = wrapper_class | default: 'inline-flex items-start justify-start gap-x-xs' -%}
+      <div class="{{ wrapper_class }} group/checkbox">
+        <label
+          class="relative flex items-center cursor-pointer"
+          for="{{ id }}"
+        >
+          <input
+            type="checkbox"
+            class="relative transition-all border appearance-none cursor-pointer disabled:border-t-border size-4 peer border-blue-gray-200 checked:border-t-foreground"
+            id="{{ id }}"
+            value="{{ value }}"
+            name="{{ name }}"
+            aria-labelledby="{{ id }}_label"
+
+            {% if help_text != blank %}
+              aria-describedby="{{ id }}_text"
+            {% endif %}
+
+            {% if disabled %}
+              disabled
+            {% endif %}
+
+            {% if checked %}
+              checked
+            {% endif %}
+
+            {% if checked %}
+              checked
+            {% endif %}
+
+            {% if required %}
+              required
+            {% endif %}
+
+            {% if form_id != blank %}
+              form="{{ form_id }}"
+            {% endif %}
+
+            {{ attributes }}
+          />
+          <span
+            class="absolute transition-opacity opacity-0 pointer-events-none size-3 text-t-foreground top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100 peer-disabled:border-t-border peer-disabled:text-t-border"
+          >
+            {%- render 'icon' with 'icon-checkbox-tick', size: 12, class: 'block' -%}
+          </span>
+        </label>
+        <label
+          class="mt-px cursor-pointer select-none text-t-foreground text-body group-has-[:disabled]/checkbox:text-t-border"
+          for="{{ id }}"
+        >
+          <div>
+            <p id="{{ id }}_label" class="block text-body leading-none text-t-foreground group-has-[:disabled]/checkbox:text-t-disabled {{ label_class }}">
+              {{ label }}
+            </p>
+            {%- if help_text != blank -%}
+              <p id="{{ id }}_text" class="block mt-2xs text-caption text-t-foreground-secondary group-has-[:disabled]/checkbox:text-t-disabled">
+                {{ help_text }}
+              </p>
+            {%- endif -%}
+          </div>
+        </label>
+      </div>
+    {%- when 'select' -%}
+      {%- liquid
+        assign wrapper_class = wrapper_class | default: 'flex flex-col gap-2xs w-full'
+        assign select_wrapper_tag = 'div'
+
+        if custom_select
+          assign select_wrapper_tag = 'custom-select'
+        endif
+      -%}
+
+      {% capture element_attributes %}
+        id="{{ id }}"
+        value="{{ value }}"
+        name="{{ name }}"
+
+        {% if multiple %}
+          multiple
+        {% endif %}
+
+        {% if disabled %}
+          disabled
+        {% endif %}
+        {% if required %}
+          required
+        {% endif %}
+
+        {% if placeholder %}
+          placeholder="{{ placeholder }}"
+        {% endif %}
+
+        {% if form_id != blank %}
+          form="{{ form_id }}"
+        {% endif %}
+
+        {{ attributes }}
+      {% endcapture %}
+      {%- render '@needs-script', entries: 'core-custom-select' -%}
+      <{{select_wrapper_tag}}
+        class='{{ wrapper_class }} group'
+        {{ wrapper_attributes }}
+
+        {% if custom_select %}
+          {{ element_attributes }}
+          label="{{ label }}"
+
+          {% if always_show_placeholder %}
+            always-show-placeholder="true"
+          {% endif %}
+        {% endif %}
+      >
+        <div
+          class="relative w-full group peer"
+          {% if has_errors %}
+            error
+          {% endif %}
+        >
+          <select
+            {% if help_text != blank %}
+              aria-describedby="{{ id }}_text"
+            {% endif %}
+            class="block w-full border appearance-none text-t-foreground disabled:text-t-border rounded-forms-radius px-sm-forms-padding lg:px-lg-forms-padding pt-sm-forms-padding lg:pt-lg-forms-padding h-sm-forms-inputheight lg:h-lg-forms-inputheight text-body bg-gray-50 bg-t-background border-t-foreground-secondary disabled:border-t-border focus:outline-none focus:ring-0 focus:border-t-foreground peer group-[[error]]:ring-u-error group-[[error]]:border-[transparent] group-[[error]]:ring-2"
+            {{ element_attributes }}
+          >
+            {{ options }}
+          </select>
+
+          <div
+            class="absolute inset-y-0 flex items-center size-3 pointer-events-none end-sm-forms-padding lg:end-sm-forms-padding text-t-foreground group-[[error]]:text-u-error h-sm-forms-inputheight lg:h-lg-forms-inputheigh"
+          >
+            {%- render 'icon' with 'icon-select-arrow', size: 12, class: 'block' -%}
+          </div>
+          <label
+            for="{{ id }}"
+            class="absolute caption text-t-foreground-secondary duration-300 transform -translate-y-2.5 scale-75 top-3.5 start-sm-forms-padding lg:start-sm-forms-padding z-10 origin-[0] peer-focus:text-t-foreground peer-disabled:text-t-border peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-2.5 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+          >
+            {{ label }}
+          </label>
+        </div>
+
+        {%- if help_text != blank -%}
+          <p id="{{ id }}_text" class="caption text-t-foreground-secondary gap-x-2xs group-has-[[error]]:text-u-error flex items-center justify-start">
+            {%- if has_errors -%}
+              {%- render 'icon' with 'icon-error', class: 'block' -%}
+            {%- endif -%}
+            <span>{{ help_text }}</span>
+          </p>
+        {%- endif -%}
+      </{{ select_wrapper_tag }}>
+
+
+    {%- when 'switch' -%}
+      {%- assign wrapper_class = wrapper_class | default: 'inline-flex items-start justify-start gap-x-xs' -%}
+      <div
+        class='group/switch {{ wrapper_class }}'
+        {{ wrapper_attributes }}
+      >
+        <div class="relative inline-block h-6 rounded-full cursor-pointer w-11">
+          <input
+            id="{{ id }}"
+            name="{{ name }}"
+            value="{{ value }}"
+            aria-labelledby="{{ id }}_label"
+
+            {% if help_text != blank %}
+              aria-describedby="{{ id }}_text"
+            {% endif %}
+
+            type="checkbox"
+            class="absolute w-full h-full transition-colors duration-300 rounded-full appearance-none cursor-pointer peer disabled:bg-t-background-secondary bg-p-neutral checked:bg-t-foreground peer-checked:border-t-border peer-checked:before:bg-t-border checked:disabled:bg-t-foreground-secondary"
+
+            {% if disabled %}
+              disabled
+            {% endif %}
+
+            {% if checked %}
+              checked
+            {% endif %}
+
+            {% if required %}
+              required
+            {% endif %}
+
+            {% if form_id != blank %}
+              form="{{ form_id }}"
+            {% endif %}
+
+            {{ attributes }}
+          >
+          <label
+            class="before:content[''] absolute top-2/4 left-0.5 h-5 w-5 -translate-y-2/4 cursor-pointer rounded-full border border-none border-t-border bg-t-background peer-disabled:bg-t-border shadow-md transition-all duration-300 before:absolute before:top-2/4 before:left-2/4 before:hidden before:h-10 before:w-10 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity hover:before:opacity-10 peer-checked:translate-x-full peer-checked:border-t-border peer-checked:before:bg-t-border"
+            for="{{ id }}"
+          >
+          </label>
+        </div>
+
+        <label for="{{ id }}" class="mt-px cursor-pointer select-none">
+          <div>
+            <p id="{{ id }}_label" class="block text-body text-t-foreground group-has-[:disabled]/switch:text-t-disabled {{ label_class }}">
+              {{ label }}
+            </p>
+            {%- if help_text != blank -%}
+              <p id="{{ id }}_text" class="block text-caption text-t-foreground-secondary group-has-[:disabled]/switch:text-t-disabled">
+                {{ help_text }}
+              </p>
+            {%- endif -%}
+          </div>
+        </label>
+      </div>
+
+
+    {%- else -%}
+  {%- endcase -%}
+{%- endcapture -%}
+
+{%- if field_content != blank -%}
+  {{ field_content }}
+{%- endif -%}

@@ -1,0 +1,12 @@
+{%- capture modules_list -%}
+  -global.js,
+  -app-provider.js,
+  -core-icon.js,
+  -main-header.js,
+  -core-main-product.js
+{%- endcapture -%}
+{%- assign modules_list = modules_list | strip_newlines | strip | split: ',' -%}
+
+{%- for module_name in modules_list -%}
+  <link rel='modulepreload' href='{{ module_name | asset_url }}'>
+{%- endfor -%}

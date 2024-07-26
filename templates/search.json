@@ -1,0 +1,8 @@
+{
+  "sections": {
+    "main": {
+      "type": "liquid"
+    }
+  },
+  "order": ["main"]
+}

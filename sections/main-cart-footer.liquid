@@ -1,0 +1,69 @@
+{%- render '@needs-script', entries: 'core-cart-sections' -%}
+<cart-sections
+  section-id='{{ section.id }}'
+  id='{{ section.id }}'
+  class='flex justify-end px-pagemargin 2xl:container py-md'
+>
+  <div class='w-full max-w-md grid grid-cols-1 gap-sm'>
+    {%- render 'cart-note-input' -%}
+    {% for block in section.blocks %}
+      {%- case block.type -%}
+        {%- when '@app' -%}
+          {% render block %}
+        {%- when 'subtotal' -%}
+          <div class='grid grid-cols-1 gap-2xs' {{ block.shopify_attributes }}>
+            {%- render 'cart-totals-content' -%}
+          </div>
+        {%- else -%}
+          <div class='grid grid-cols-1 gap-2xs' {{ block.shopify_attributes }}>
+            <button
+              type='submit'
+              id='checkout'
+              class='btn'
+              variant='primary'
+              name='checkout'
+              {% if cart == empty %}
+                disabled
+              {% endif %}
+              form='cart'
+            >
+              {{ 'sections.cart.checkout' | t }}
+            </button>
+          </div>
+
+          {%- if additional_checkout_buttons -%}
+            <div class='grid grid-cols-1 gap-xs'>
+              {{ content_for_additional_checkout_buttons }}
+            </div>
+          {%- endif -%}
+      {%- endcase -%}
+    {% endfor %}
+
+    <div id='cart-errors'></div>
+  </div>
+</cart-sections>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-footer.name",
+  "enabled_on": {
+    "templates": ["cart"]
+  },
+  "settings": [],
+  "blocks": [
+    {
+      "type": "subtotal",
+      "name": "t:sections.main-cart-footer.blocks.subtotal.name",
+      "limit": 1
+    },
+    {
+      "type": "buttons",
+      "name": "t:sections.main-cart-footer.blocks.buttons.name",
+      "limit": 1
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

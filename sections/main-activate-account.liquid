@@ -1,0 +1,93 @@
+{%- assign activate_account_password = 'customer.activate_account.password' | t -%}
+{%- assign activate_account_password_confirm = 'customer.activate_account.password_confirm' | t -%}
+
+<div class='customer activate mx-auto px-4 py-9 max-w-md text-center'>
+  <h1 class='mb-10'>
+    {{ 'customer.activate_account.title' | t }}
+  </h1>
+  <p>
+    {{ 'customer.activate_account.subtext' | t }}
+  </p>
+  {%- form 'activate_customer_password', class: 'mt-10' -%}
+    {%- render 'form-errors', form: form -%}
+
+    <div class='field'>
+      {% liquid
+        assign has_error = blank
+        assign error_text = blank
+        if form.errors contains 'password'
+          assign has_error = true
+        endif
+      %}
+      {%- if form.errors contains 'password' -%}
+        {%- capture error_text -%}
+          {{ form.errors.translated_fields.password | capitalize }}
+          {{ form.errors.messages.password }}
+        {%- endcapture -%}
+      {%- endif -%}
+
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'password',
+        name: 'customer[password]',
+        id: 'password',
+        autocomplete: 'new-password',
+        label: activate_account_password,
+        error: has_error,
+        error_text: error_text
+      -%}
+    </div>
+
+    <div class='field mt-5'>
+      {% liquid
+        assign has_error = blank
+        assign error_text = blank
+        if form.errors contains 'password_confirmation'
+          assign has_error = true
+        endif
+      %}
+      {%- if form.errors contains 'password_confirmation' -%}
+        {%- capture error_text -%}
+          {{ form.errors.translated_fields.password_confirmation | capitalize }}
+          {{ form.errors.messages.password_confirmation }}
+        {%- endcapture -%}
+      {%- endif -%}
+
+      {%- render 'form-field',
+        kind: 'input',
+        type: 'password',
+        name: 'customer[password_confirmation]',
+        id: 'password_confirmation',
+        autocomplete: 'new-password',
+        label: activate_account_password_confirm,
+        error: has_error,
+        error_text: error_text
+      -%}
+    </div>
+
+    <button class='btn mt-10 mb-4' variant='primary'>
+      {{ 'customer.activate_account.submit' | t }}
+    </button>
+    <button name='decline' class='btn text-center block w-fit m-auto' variant='tertiary'>
+      {{ 'customer.activate_account.cancel' | t }}
+    </button>
+  {%- endform -%}
+
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when '@app' -%}
+        {% render block %}
+    {%- endcase -%}
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-activate-account.name",
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

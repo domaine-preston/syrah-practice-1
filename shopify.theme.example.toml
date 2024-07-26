@@ -1,0 +1,5 @@
+# Syntax of this file should respect Liquid syntax as its used for theme boilerplating by CLI
+[environments.dev]
+store = "{{ storeHandle }}"
+password = "{{ themeAccessToken }}"
+theme = "{{ themeId }}"

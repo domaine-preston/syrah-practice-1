@@ -1,0 +1,30 @@
+{%- if form.errors -%}
+  <div class='grid grid-cols-1 gap-y-2xs pb-xs'>
+    <h2 class='flex items-center justify-center mt-4 p' tabindex='-1' autofocus>
+      <span class='sr-only'>{{ 'accessibility.error' | t }} </span>
+      {%- render 'icon', icon: 'icon-error', class: 'min-w-5 mr-2', size: 20 -%}
+      {{ 'templates.contact.form.error_heading' | t }}
+    </h2>
+
+    {%- if form.errors contains 'form' -%}
+      <div class='text-center caption'>
+        {{ form.errors | default_errors }}
+      </div>
+    {%- else -%}
+      <ul class='grid grid-cols-1 gap-y-2xs text-left caption'>
+        {%- for field in form.errors -%}
+          <li class='list-disc list-inside'>
+            {%- if field == 'form' -%}
+              {{ form.errors.messages[field] }}
+            {%- else -%}
+              <a href='#RegisterForm-{{ field }}'>
+                {{ form.errors.translated_fields[field] | capitalize }}
+                {{ form.errors.messages[field] }}
+              </a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+{%- endif -%}

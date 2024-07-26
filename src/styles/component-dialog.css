@@ -1,0 +1,64 @@
+.dialog::backdrop {
+  @apply hidden transform-gpu bg-u-overlay opacity-0 transition-[display,opacity,overlay] delay-100 duration-300 [transition-behavior:allow-discrete] motion-reduce:transition-none;
+}
+
+.dialog[open]::backdrop {
+  @apply block opacity-100 delay-0;
+}
+
+@starting-style {
+  .dialog[open]::backdrop {
+    @apply opacity-0;
+  }
+}
+
+.dialog {
+  @apply fixed inset-0 m-0 block h-dvh w-dvw overflow-hidden overscroll-contain bg-[unset] opacity-100 transition-[visibility,opacity,display,overlay] [transition-behavior:allow-discrete] motion-reduce:transition-none;
+  @apply [&:modal]:max-h-[100dvh] [&:modal]:max-w-[100vw];
+}
+
+.dialog[type='modal'] {
+  @apply md:flex md:items-center md:justify-center;
+}
+
+.dialog:not([open]) {
+  @apply pointer-events-none invisible opacity-0 delay-500 duration-700 backdrop:opacity-0;
+}
+
+@starting-style {
+  .dialog[open] {
+    @apply opacity-0;
+  }
+}
+
+.modal {
+  @apply h-full w-full translate-y-full overflow-y-auto overscroll-contain bg-p-lightest opacity-0 transition-[opacity,transform,overlay] delay-0 duration-300 ease-in-out motion-reduce:transition-none md:h-auto md:w-10/12 md:translate-y-16 lg:max-h-dvh lg:max-w-2xl;
+}
+
+.modal[size='modal-max'] {
+  @apply !h-full !max-h-full !w-full !max-w-full;
+}
+
+.dialog[open] .modal {
+  @apply transform-none opacity-100 delay-100;
+}
+
+.drawer {
+  @apply fixed right-0 h-full w-full translate-x-full overflow-y-auto overscroll-contain bg-p-lightest transition-transform delay-0 duration-300 ease-in-out scrollbar-thin scrollbar-track-[transparent] scrollbar-thumb-p-neutral motion-reduce:transition-none sm:max-w-[400px];
+}
+
+.drawer[anchor='left'] {
+  @apply left-0 right-auto -translate-x-full;
+}
+
+.dialog:not([open]) .drawer[anchor='right'] {
+  @apply translate-x-full delay-0;
+}
+
+.dialog:not([open]) .drawer[anchor='left'] {
+  @apply -translate-x-full delay-0;
+}
+
+.dialog[open] .drawer {
+  @apply transform-none delay-100;
+}

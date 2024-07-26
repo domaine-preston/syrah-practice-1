@@ -1,0 +1,195 @@
+{% comment %}
+  Renders facets (filtering and sorting)
+
+  Accepts:
+  - results: {Object} Collection or Search object
+
+  Usage:
+  {% render 'facets', results: collection %}
+{% endcomment %}
+
+<!-- Drawer Filters -->
+<facet-filters-form
+  section-id='facet-filters'
+  class='flex h-full [&[loading]]:opacity-50 [&[loading]]:pointer-events-none'
+>
+  <form class='flex flex-col w-full mt-4'>
+    <div class='w-full flex-1'>
+      {%- for filter in results.filters -%}
+        {% case filter.type %}
+          {% when 'boolean', 'list' %}
+            <details
+              id='Details-Mobile-{{ filter.param_name | escape }}'
+              class='js-filter  border-t border-gray-200 px-4 py-6'
+              data-index='mobile-{{ forloop.index }}'
+              sub-section-id='Details-Mobile-{{ filter.param_name | escape }}'
+              open
+            >
+              <summary class='focus-inset -mx-2 -my-3 flow-root group/filter-dropdown'>
+                <div class='flex w-full items-center justify-between bg-white px-2 py-3 text-sm text-gray-400'>
+                  <span class='font-medium text-gray-900'>{{ filter.label | escape }}</span>
+
+                  <span class='ml-6 flex items-center'>
+                    <span>
+                      {%- render 'icon' with 'icon-arrow',
+                        attributes: "aria-hidden='true' focusable='false'",
+                        class: 'rotate-0 transform group-[[open]]/filter-dropdown:-rotate-180'
+                      -%}
+                    </span>
+                  </span>
+                </div>
+              </summary>
+
+              <div
+                id='FacetMobile-{{ forloop.index }}'
+                class='pt-6'
+              >
+                <ul class='list-unstyled space-y-6' role='list'>
+                  {%- liquid
+                    assign sorted_values = filter.values
+
+                    # Keep the selected values grouped together when operator is AND
+                    if filter.operator == 'AND'
+                      assign active_filter_values = filter.values | where: 'active', true
+                      assign inactive_filter_values = filter.values | where: 'active', false
+                      assign sorted_values = active_filter_values | concat: inactive_filter_values
+                    endif
+                  -%}
+
+                  {%- for value in sorted_values -%}
+                    {% liquid
+                      assign input_id = 'Filter-' | append: filter.param_name | escape | append: '-mobile-' | append: forloop.index
+                      assign is_disabled = false
+                      if value.count == 0 and value.active == false
+                        assign is_disabled = true
+                      endif
+                    %}
+
+                    {%- capture text_value -%}
+                    <span aria-hidden="true">
+                      <span>{{- value.label -}}</span> ({{- value.count -}})
+                    </span>
+                    <span class="sr-only">
+                      {{- value.label | escape }} (
+                      {%- if value.count == '1' -%}
+                        {{- 'sections.collection_template.facets.product_count_simple.one' | t: count: value.count -}}
+                      {%- else -%}
+                        {{- 'sections.collection_template.facets.product_count_simple.other' | t: count: value.count -}}
+                      {%- endif -%}
+                      )
+                    </span>
+                  {%- endcapture -%}
+
+                    <li>
+                      {% if presentation == 'swatch' %}
+                        <div>
+                          {% render 'swatch-input',
+                            id: input_id,
+                            type: 'checkbox',
+                            name: value.param_name,
+                            value: value.value,
+                            product_form_id: 'FacetFiltersFormMobile',
+                            swatch: value.swatch,
+                            checked: value.active,
+                            disabled: is_disabled
+                          %}
+                        </div>
+                      {% else %}
+                        {%- render 'form-field',
+                          kind: 'checkbox',
+                          id: input_id,
+                          checked: value.active,
+                          name: value.param_name,
+                          label: text_value,
+                          value: value.value,
+                          disabled: is_disabled
+                        -%}
+                      {% endif %}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </details>
+          {% when 'price_range' %}
+            <details
+              id='Details-Mobile-{{ filter.param_name | escape }}'
+              class='js-filter border-t border-gray-200 px-4 py-6'
+              data-index='mobile-{{ forloop.index }}'
+              sub-section-id='Details-Mobile-{{ filter.param_name | escape }}'
+              open
+            >
+              <summary class='focus-inset -mx-2 -my-3 flow-root group/filter-dropdown'>
+                <div class='flex w-full items-center justify-between bg-white px-2 py-3 text-sm text-gray-400'>
+                  <span class='font-medium text-gray-900'>{{ filter.label | escape }}</span>
+
+                  <span class='ml-6 flex items-center'>
+                    <span>
+                      {%- render 'icon' with 'icon-arrow',
+                        attributes: "aria-hidden='true' focusable='false'",
+                        class: 'rotate-0 transform group-[[open]]/filter-dropdown:-rotate-180'
+                      -%}
+                    </span>
+                  </span>
+                </div>
+              </summary>
+
+              <div
+                id='FacetMobile-{{ forloop.index }}'
+                class='pt-6'
+              >
+                {%- assign max_price_amount = filter.range_max | money | strip_html | escape -%}
+                <p class='pb-4'>
+                  {{ 'sections.collection_template.facets.max_price' | t: price: max_price_amount }}
+                </p>
+
+                {% render 'price-facet', filter: filter, id_prefix: 'Mobile-Filter-' %}
+              </div>
+            </details>
+        {% endcase %}
+      {%- endfor -%}
+
+      <div
+        id='Details-Mobile-SortBy'
+        class='js-filter border-t border-gray-200 px-4 py-6'
+        data-index='mobile-{{ forloop.index }}'
+        sub-section-id='Details-Mobile-SortBy'
+      >
+        <div class='-mx-2 -my-3 flow-root group/filter-dropdown'>
+          <div class='flex w-full items-center justify-between bg-white px-2 py-3 text-sm text-gray-400'>
+            {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+            {% capture options %}
+            {%- for option in results.sort_options -%}
+              <option
+                value="{{ option.value | escape }}"
+                {% if option.value == sort_by %}
+                  selected="selected"
+                {% endif %}
+              >
+                {{ option.name | escape }}
+              </option>
+            {%- endfor -%}
+          {% endcapture %}
+            {% assign label = 'sections.collection_template.facets.sort_by_label' | t %}
+
+            {%- render 'form-field', kind: 'select', name: 'sort_by', id: 'SortBy', label: label, options: options -%}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class='sticky bottom-0 bg-p-light w-full p-4 flex justify-center'>
+      <button
+        class='btn'
+        variant='primary'
+        type='submit'
+        {% unless collection.products %}
+          disabled
+        {% endunless %}
+        sub-section-id='FacetFiltersFormSubmit'
+      >
+        Apply Filters ({{ collection.products_count }}
+        {{ collection.products_count | pluralize: 'result', 'results' }})
+      </button>
+    </div>
+  </form>
+</facet-filters-form>

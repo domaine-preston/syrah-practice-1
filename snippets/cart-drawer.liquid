@@ -1,0 +1,37 @@
+{%- render '@needs-script', entries: 'core-cart-sections' -%}
+<cart-sections
+  section-id='cart-drawer'
+  class='grid grid-cols-1 grid-rows-[minmax(auto,_1fr)_auto] h-full bg-p-lightest'
+  cloak
+>
+  <form
+    id='cart'
+    method='post'
+    action='{{ routes.cart_url }}'
+    class='grid grid-cols-1 place-items-start px-sm py-xs'
+  >
+    {%- if cart == empty -%}
+      <h4>Empty Cart Drawer</h4>
+    {%- else -%}
+      <div class='grid grid-cols-[100px_1fr_auto] gap-y-sm w-full'>
+        {%- liquid
+          render 'cart-drawer-item' for cart.items as item
+        -%}
+      </div>
+    {%- endif -%}
+  </form>
+
+  <div class='sticky bottom-0 bg-p-lightest p-sm drop-shadow grid grid-cols-1 gap-y-sm'>
+    {%- render 'cart-totals-content' -%}
+    <button
+      form='cart'
+      type='submit'
+      variant='primary'
+      id='checkout'
+      name='checkout'
+      class='btn col-span-2'
+    >
+      Checkout
+    </button>
+  </div>
+</cart-sections>

@@ -1,0 +1,257 @@
+{%- liquid
+  assign slides = section.blocks | where: 'type', 'slide'
+-%}
+
+<swiper-container
+  class='block whitespace-nowrap overflow-clip w-full'
+  role='region'
+  navigation='true'
+  loop='true'
+  pagination='true'
+  slides-per-view='auto'
+  {% if section.settings.enable_auto_rotate %}
+    autoplay='true'
+    autoplay-delay='{{ section.settings.rotate_speed | default: 3 | times: 1000 }}'
+  {% endif %}
+>
+  {% for block in slides %}
+    <swiper-slide
+      class='relative w-full aspect-video inline-block'
+      role='group'
+      slide-index='{{ forloop.index0 }}'
+      aria-roledescription='{{ 'sections.image_carousel.slide' | t }}'
+      aria-label='{{ forloop.index }} {{ 'general.slider.of' | t }} {{ forloop.length }}'
+      {{ block.shopify_attributes }}
+    >
+      {% if block.settings.image != blank %}
+        {%- liquid
+          assign preload = false
+          assign image_loading = 'lazy'
+
+          if section.index < 2 and forloop.index < 2
+            assign preload = true
+            assign image_loading = 'eager'
+          endif
+        -%}
+
+        {%- render 'image',
+          image: block.settings.image,
+          loading: image_loading,
+          preload: preload,
+          sizes: '100vw',
+          widths: '320, 640, 960, 1280, 1600, 1920',
+          class: 'inset-0 w-full h-full'
+        -%}
+      {% else %}
+        <div class='inset-0 w-full h-full'>
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'w-full h-full' }}
+        </div>
+      {% endif %}
+
+      <div class='{{ block.settings.text_color }} {{ block.settings.alignment }} absolute inset-0 w-full h-full py-pagemargin grid grid-cols-1 items-center container'>
+        <div class='grid grid-cols-1 gap-y-xs {{ block.settings.alignment }}'>
+          {% if block.settings.title != blank %}
+            <h2 class='h2'>
+              {{ block.settings.title | newline_to_br }}
+            </h2>
+          {% endif %}
+
+          {% if block.settings.subtitle != blank %}
+            <h3 class='h5'>
+              {{ block.settings.subtitle | newline_to_br }}
+            </h3>
+          {% endif %}
+
+          {% if block.settings.link_label != blank %}
+            <a
+              variant='tertiary'
+              class='underline hover:decoration-2 underline-offset-4 {{ block.settings.text_color }}'
+              href='{{ block.settings.link }}'
+            >
+              {{ block.settings.link_label | escape }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </swiper-slide>
+  {% endfor %}
+</swiper-container>
+
+{% schema %}
+{
+  "name": "t:sections.image-carousel.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_auto_rotate",
+      "label": "t:sections.image-carousel.settings.enable_auto_rotate.label",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rotate_speed",
+      "min": 3,
+      "max": 9,
+      "step": 1,
+      "label": "t:sections.image-carousel.settings.rotate_speed.label",
+      "unit": "t:sections.image-carousel.settings.rotate_speed.unit",
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "t:sections.image-carousel.blocks.slide.name",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "header",
+          "content": "t:sections.image-carousel.blocks.slide.header__1.content"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.image-carousel.blocks.slide.image.label"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.image-carousel.blocks.slide.header__2.content"
+        },
+        {
+          "type": "textarea",
+          "id": "title",
+          "label": "t:sections.image-carousel.blocks.slide.title.label",
+          "default": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle",
+          "label": "t:sections.image-carousel.blocks.slide.subtitle.label",
+          "default": "Subheading"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "t:sections.image-carousel.blocks.slide.alignment.label",
+          "options": [
+            {
+              "value": "justify-items-start text-start",
+              "label": "t:sections.image-carousel.blocks.slide.alignment.options__1.label"
+            },
+            {
+              "value": "justify-items-center text-center",
+              "label": "t:sections.image-carousel.blocks.slide.alignment.options__2.label"
+            },
+            {
+              "value": "justify-items-end text-end",
+              "label": "t:sections.image-carousel.blocks.slide.alignment.options__3.label"
+            }
+          ],
+          "default": "justify-items-start text-start"
+        },
+        {
+          "type": "select",
+          "id": "text_color",
+          "label": "t:sections.image-carousel.blocks.slide.title_color.label",
+          "options": [
+            {
+              "group": "Primitives",
+              "value": "text-p-darkest",
+              "label": "Darkest"
+            },
+            {
+              "group": "Primitives",
+              "value": "text-p-dark",
+              "label": "Dark"
+            },
+            {
+              "group": "Primitives",
+              "value": "text-p-neutral",
+              "label": "Neutral"
+            },
+            {
+              "group": "Primitives",
+              "value": "text-p-light",
+              "label": "Light"
+            },
+            {
+              "group": "Primitives",
+              "value": "text-p-lightest",
+              "label": "Lightest"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-foreground",
+              "label": "Foreground"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-foreground-secondary",
+              "label": "Foreground Secondary"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-background",
+              "label": "Background"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-background-secondary",
+              "label": "Background Secondary"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-brand-primary",
+              "label": "Brand Primary"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-brand-secondary",
+              "label": "Brand Secondary"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-brand-primary-contrast",
+              "label": "Brand Primary Contrast"
+            },
+            {
+              "group": "Tokens",
+              "value": "text-t-brand-secondary-contrast",
+              "label": "Brand Secondary Contrast"
+            }
+          ],
+          "default": "text-p-darkest"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "t:sections.image-carousel.blocks.slide.link_label.label",
+          "default": "Show Now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.image-carousel.blocks.slide.link.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.image-carousel.presets.name",
+      "blocks": [
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

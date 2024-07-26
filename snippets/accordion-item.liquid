@@ -1,0 +1,57 @@
+{%- comment -%}
+  Render an accordion item with a title and content.
+
+  Accepts:
+    - id (string): Unique identifier for the accordion item.
+    - title (string): Title of the accordion item.
+    - content (string): Content of the accordion item.
+    - group_name (string): Name of the group the accordion item belongs to.
+    - connected (boolean): Whether the accordion item is connected to other items in the group.
+    - rte (boolean): Whether the content is rich text.
+
+  Behavior:
+    - If no group_name is provided, the group_name will default to 'accordion'.
+    - If connected is true, the accordion item will be a radio button instead of a checkbox, so only one item in the group can be open at a time.
+{%- endcomment -%}
+
+{%- assign group_name = group_name -%}
+{%- assign connected = connected | default: false, allow_false: true -%}
+{%- assign rte = rte | default: true, allow_false: true -%}
+
+{%- if group_name == blank -%}
+  {%- capture group_name -%}
+    accordion-input--{{ id | handleize }}
+  {%- endcapture -%}
+{%- endif -%}
+<div id='Details-{{ id }}' class='group'>
+  <label class='list-none' for='accordion-checkbox-{{ id }}'>
+    <input
+      aria-controls='accordion-content-{{ id }}'
+      aria-labelled='Toggle {{ title | escape }} accordion'
+      class='sr-only peer'
+      type='{% if connected %}radio{% else %}checkbox{% endif %}'
+      id='accordion-checkbox-{{ id }}'
+      name='{{ group_name | default: 'accordion' }}'
+    >
+    <div class='flex items-center justify-between w-full peer-focus:ring-1 ring-u-focus'>
+      <h2 class='h6' id='accordion-title-{{ id }}'>
+        {{ title }}
+      </h2>
+      {%- render 'icon' with 'icon-caret',
+        class: 'group-has-[:checked]:rotate-180 duration-300 transition-transform'
+      -%}
+    </div>
+  </label>
+  <div
+    class='{% if rte %}rte{% endif %} group-has-[:checked]:grid-rows-[1fr] group-has-[:checked]:visible grid-rows-[0fr] transition-[visiblity,grid-template-rows] duration-300 grid invisible'
+    id='accordion-content-{{ id }}'
+    role='region'
+    aria-labelledby='accordion-title-{{ id }}'
+  >
+    <div class='overflow-hidden'>
+      <div class='pt-xs'>
+        {{ content }}
+      </div>
+    </div>
+  </div>
+</div>

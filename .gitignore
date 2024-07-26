@@ -1,0 +1,27 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+**.js.map
+**.css.map
+node_modules
+shopify.theme.toml
+
+node_modules/*
+assets/component-*.js
+shopify.theme.toml
+assets/chunk-**.js
+assets/component-**.js
+assets/component-**.css
+assets/-**.js
+assets/-**.css
+assets/icons.svg
+
+.turbo
+
+*.zip
